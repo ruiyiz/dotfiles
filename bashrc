@@ -57,9 +57,19 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+
 #
 # Environment Variables
 #
+
+# virtualenvwrapper settings
+if [ `id -u` != 0 ]; then
+    export VIRTUALENV_USE_DISTRIBUTE=1      # Always use pip/distribute
+    export WORKON_HOME=$HOME/.virtualenvs   # Where all virtualenvs will be stored
+    source /usr/local/bin/virtualenvwrapper.sh
+    export PIP_VIRTUALENV_BASE=$WORKON_HOME
+    export PIP_RESPECT_VIRTUALENV=true
+fi
 
 
 #
@@ -90,6 +100,7 @@ alias uuuu='cd ../../../..';
 alias u3='cd ../../..';
 alias u4='cd ../../../..';
 alias u5='cd ../../../../..';
+
 
 #
 # Functions
@@ -172,3 +183,4 @@ function myprompt()
 
 # Activate custom prompt
 myprompt;
+
