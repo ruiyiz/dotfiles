@@ -1,0 +1,15 @@
+[ui]
+username = Ruiyi Zhang <me@ruiyizhang.com>
+[extensions]
+kiln=~/.hgextensions/kiln.py
+kilnauth=~/.hgextensions/kilnauth.py
+kilnpath=~/.hgextensions/kilnpath.py
+svnblame=~/.hgextensions/svnblame.py
+gestalt=~/.hgextensions/gestalt.py
+nobranch=~/.hgextensions/nobranch.py
+big-push=~/.hgextensions/big-push.py
+[auth]
+kiln.prefix=bizilliance.kilnhg.com
+kiln.username=Ruiyi Zhang
+[kiln_scheme]
+kiln=https://bizilliance.kilnhg.com/kiln/Repo
