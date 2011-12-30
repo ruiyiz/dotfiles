@@ -2,7 +2,7 @@ Ruiyi Zhang's Unix/Linux configuration files
 
 Installation
 
-Add the following line to your `.profile` file if virtualenvwrapper.sh is not 
+Add the following line to your `.profile` file if `virtualenvwrapper.sh` is not 
 in your PATH.
 
     export PATH=/usr/local/share/python:/usr/local/bin:$PATH
