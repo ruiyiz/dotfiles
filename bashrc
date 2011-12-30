@@ -62,16 +62,6 @@ fi
 # Environment Variables
 #
 
-# virtualenvwrapper settings
-if [ `id -u` != 0 ]; then
-    export VIRTUALENV_USE_DISTRIBUTE=1      # Always use pip/distribute
-    export WORKON_HOME=$HOME/.virtualenvs   # Where all virtualenvs will be stored
-    source `which virtualenvwrapper.sh`
-    export PIP_VIRTUALENV_BASE=$WORKON_HOME
-    export PIP_RESPECT_VIRTUALENV=true
-fi
-
-
 #
 # More aliases
 #
