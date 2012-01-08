@@ -63,7 +63,7 @@ fi
 #
 
 #
-# More aliases
+# Standard aliases
 #
 
 alias m='more ';
