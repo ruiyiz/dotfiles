@@ -119,7 +119,8 @@ function myprompt()
         clr_user=$clr_blue;
         clr_dir=$clr_blue;
 
-        PS1="{\$(jobs | wc -l | sed 's/ *//')}$clr_path[\$(pwd)]$clr_bg\n$clr_user\u$clr_bg@$clr_host\h$clr_bg$clr_dir \W $clr_bg$ "
+        #PS1="{\$(jobs | wc -l | sed 's/ *//')}$clr_path[\$(pwd)]$clr_bg\n$clr_user\u$clr_bg@$clr_host\h$clr_bg$clr_dir \W $clr_bg$ "
+        PS1="$clr_path[\$(pwd)]$clr_bg\n$clr_user\u$clr_bg@$clr_host\h$clr_bg$clr_dir \W $clr_bg$ "
 
     fi
 
