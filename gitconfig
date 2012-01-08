@@ -1,3 +1,7 @@
 [user]
 	name = Ruiyi Zhang
 	email = me@ruiyizhang.com
+[alias]
+    br = branch
+    co = checkout
+    st = status
