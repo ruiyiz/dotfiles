@@ -96,6 +96,7 @@ alias u5='cd ../../../../..';
 # Functions
 #
 
+# Custom prompt
 function myprompt()
 {
     # verbose command prompt off
@@ -174,3 +175,19 @@ function myprompt()
 # Activate custom prompt
 myprompt;
 
+# Automatically execute commands for each prompt
+export LASTDIR="/"
+
+function prompt_command {
+
+    # Record new directory on change.
+    newdir=`pwd`
+    if [ ! "$LASTDIR" = "$newdir" ]; then
+        # List directory contents
+        ls
+    fi
+
+    export LASTDIR=$newdir
+}
+
+export PROMPT_COMMAND="prompt_command"
