@@ -1,4 +1,4 @@
-dotfile_path=$HOME/src/dotfilesx;
+dotfile_path=${PWD};
 
 ln -si $dotfile_path/bashrc ~/.bashrc
 ln -si $dotfile_path/bash_aliases ~/.bash_aliases
