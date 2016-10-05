@@ -1,9 +1,10 @@
 [user]
-	name = Ruiyi Zhang
-	email = me@ruiyizhang.com
+    name = Ruiyi Zhang
+    email = rzhang@1607capital.com
 [alias]
     br = branch
     co = checkout
     st = status
 [push]
-	default = simple
+    default = simple
+
