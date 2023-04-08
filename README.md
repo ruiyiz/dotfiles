@@ -1,4 +1,4 @@
-Ruiyi Zhang's Unix/Linux configuration files
+Ruiyi Zhang's Mac/Linux configuration files
 
 Installation
 
