@@ -54,4 +54,7 @@ yabai -m config                                 \
     mouse_drop_action            swap           \
     external_bar                 all:34:0
 
+# windows in the first space will always be floating
+yabai -m config --space 1 layout float
+
 echo "yabai configuration loaded.."
