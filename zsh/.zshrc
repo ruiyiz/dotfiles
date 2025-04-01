@@ -104,8 +104,8 @@ source $ZSH/oh-my-zsh.sh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# TODO: remove doom emacs binary path
-export PATH="$HOME/.emacs.d/bin:$PATH"
+# doom emacs binary path
+export PATH="$HOME/.config/emacs/bin:$PATH"
 
 # NOTE: install keychain:
 #   sudo apt install keychain
