@@ -15,7 +15,7 @@ config.font = wezterm.font("JetBrainsMono Nerd Font")
 -- Set font size based on the operating system
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
 	-- Windows: 14pt font size
-	config.font_size = 14
+	config.font_size = 13
 elseif wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "aarch64-apple-darwin" then
 	-- macOS (Intel or Apple Silicon): 17pt font size
 	config.font_size = 17
@@ -45,4 +45,3 @@ end
 
 -- and finally, return the configuration to wezterm
 return config
-
