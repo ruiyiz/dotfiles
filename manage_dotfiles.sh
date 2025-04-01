@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of directories to manage
-DIRS=("nvim" "git" "tmux" "zsh")
+DIRS=("nvim" "git" "tmux" "zsh" "wezterm")
 
 # Check if parameter is provided
 if [ $# -ne 1 ]; then

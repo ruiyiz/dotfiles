@@ -9,6 +9,14 @@ local config = wezterm.config_builder()
 -- For example, changing the color scheme:
 -- config.color_scheme = 'AdventureTime'
 
+-- Set font and font size
+config.font = wezterm.font('JetBrainsMono Nerd Font')
+config.font_size = 16
+
+-- Set initial window dimensions
+config.initial_cols = 120
+config.initial_rows = 60
+
 config.keys = {
     -- Turn off the default CMD-m Hide action, allowing CMD-m to
     -- be potentially recognized and handled by the tab
@@ -19,8 +27,10 @@ config.keys = {
     },
 }
 
--- Sets WSL UBUNTU-24.04 as the defualt when opening Wezterm
-config.default_domain = 'WSL:Ubuntu-24.04'
+-- Check if we're running on Windows and set WSL as default domain if so
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+  config.default_domain = 'WSL:Ubuntu-24.04'
+end
 
 -- and finally, return the configuration to wezterm
 return config
