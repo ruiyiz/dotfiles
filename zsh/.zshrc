@@ -104,4 +104,23 @@ source $ZSH/oh-my-zsh.sh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# TODO: remove doom emacs binary path
 export PATH="$HOME/.emacs.d/bin:$PATH"
+
+# NOTE: install keychain:
+#   sudo apt install keychain
+# Start keychain and add all id_* keys, but only on Linux systems
+if [ "$(uname)" = "Linux" ]; then
+    if [ -x "$(command -v keychain)" ]; then
+        # Find all private keys in .ssh directory that start with id_
+        # (excluding .pub files which are the public keys)
+        private_keys=$(find $HOME/.ssh -name "id_*" -not -name "*.pub" -type f)
+
+        if [ -n "$private_keys" ]; then
+            # Start keychain with all found keys
+            eval $(keychain --eval --quiet $private_keys)
+        else
+            echo "No SSH keys found that match pattern 'id_*'"
+        fi
+    fi
+fi
