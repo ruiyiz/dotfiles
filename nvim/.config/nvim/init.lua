@@ -319,7 +319,18 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
+        pickers = {
+          find_files = {
+            -- `hidden` is a boolean that allows you to search hidden files
+            --  (files that start with a dot)
+            hidden = true,
+            -- ignore .git directories
+            --  (this is a bit slow, so it's disabled by default)
+            -- find_command = { 'rg', '--files', '--hidden', '-g', '!.git' },
+            -- NOTE: You can also use `fd` instead of `rg` if you prefer
+            find_command = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git' },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
