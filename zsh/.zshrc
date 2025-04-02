@@ -99,17 +99,21 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias emacs="emacs --init-directory=$HOME/.config/emacs"
+alias e="emacs -nw"
 
+# Include ~/.local/bin/ in search path
 . "$HOME/.local/bin/env"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # doom emacs binary path
 export PATH="$HOME/.config/emacs/bin:$PATH"
 
+# fzf config
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Start keychain and add all id_* keys, but only on Linux systems
 # NOTE: install keychain:
 #   sudo apt install keychain
-# Start keychain and add all id_* keys, but only on Linux systems
 if [ "$(uname)" = "Linux" ]; then
     if [ -x "$(command -v keychain)" ]; then
         # Find all private keys in .ssh directory that start with id_
@@ -124,3 +128,4 @@ if [ "$(uname)" = "Linux" ]; then
         fi
     fi
 fi
+
