@@ -87,6 +87,13 @@
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                  (org-agenda-overriding-header "Next Week:")))))))
 
+;; Hide the file path/source in agenda view
+(setq org-agenda-prefix-format
+      '((agenda . " %i %?-12t% s")
+        (todo . " %i")
+        (tags . " %i")
+        (search . " %i")))
+
 ;; Archive settings
 (defun my-org-archive-done-tasks ()
   "Archive all done tasks in a file."
