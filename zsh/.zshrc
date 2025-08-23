@@ -129,6 +129,7 @@ if [ "$(uname)" = "Linux" ]; then
     fi
 fi
 
+<<<<<<< Updated upstream
 # yazi
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -149,3 +150,9 @@ export CXX="/opt/homebrew/opt/llvm/bin/clang++"
 export CFLAGS="-I/opt/homebrew/opt/libomp/include"
 export CXXFLAGS="-I/opt/homebrew/opt/libomp/include"
 export LDFLAGS="-L/opt/homebrew/opt/libomp/lib -lomp"
+=======
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+>>>>>>> Stashed changes
