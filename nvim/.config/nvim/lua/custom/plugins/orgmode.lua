@@ -1,11 +1,14 @@
 return {
   {
     'nvim-orgmode/orgmode',
+    dependencies = {
+      { 'nvim-treesitter/nvim-treesitter', lazy = true },
+    },
     event = 'VeryLazy',
     config = function()
       require('orgmode').setup {
-        org_agenda_files = '~/MyDrive/org/*',
-        org_default_notes_file = '~/MyDrive/org/refile.org',
+        org_agenda_files = '~/Developer/Repos/org/**/*',
+        org_default_notes_file = '~/Developer/Repos/org/refile.org',
         org_agenda_custom_commands = {
           -- "v" is the shortcut that will be used in the prompt
           v = {
