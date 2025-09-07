@@ -28,7 +28,7 @@ class VSCodeConfigManager:
         },
         'Linux': {
             'Code': '~/.config/Code/User/',
-            'Code Server': '~/.config/code-server/User/',
+            'Code Server': '~/data/User/',
             'Positron': '~/.config/Positron/User/'
         },
         'Windows': {
