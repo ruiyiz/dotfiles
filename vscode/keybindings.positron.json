@@ -1,0 +1,20 @@
+[
+  // ================================
+  // Positron
+  // ================================
+  {
+    "key": "ctrl+'",
+    "command": "workbench.action.positronConsole.focusConsole",
+    "when": "isPositron && editorTextFocus"
+  },
+  {
+    "key": "ctrl+'",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "isPositron && (positronConsoleFocused || !inputFocus)"
+  },
+  {
+    "key": "ctrl+shift+l",
+    "command": "workbench.action.positronConsole.clearConsole",
+    "when": "isPositron && (positronConsoleFocused || editorTextFocus)"
+  },
+]

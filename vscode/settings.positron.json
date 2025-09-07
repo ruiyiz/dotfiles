@@ -1,0 +1,8 @@
+{
+  // ================================
+  // Positron & Data Science
+  // ================================
+  "positron.plots.darkFilter": "off",
+  "positron.r.quietMode": true,
+  "console.fontSize": 16,
+}

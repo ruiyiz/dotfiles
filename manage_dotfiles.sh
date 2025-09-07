@@ -35,4 +35,15 @@ for dir in "${DIRS[@]}"; do
     fi
 done
 
+# Handle VS Code configurations separately (requires Python script)
+if [ -f "manage_vscode_config.py" ] && [ -d "vscode" ]; then
+    echo ""
+    echo "Managing VS Code configurations..."
+    if [ "$1" = "stow" ]; then
+        python3 manage_vscode_config.py deploy
+    else
+        python3 manage_vscode_config.py remove
+    fi
+fi
+
 echo "Done!"

@@ -1,0 +1,84 @@
+{
+  // ================================
+  // Core
+  // ================================
+  "window.newWindowProfile": "Default",
+  "workbench.colorTheme": "Gruvbox Dark Hard",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.startupEditor": "none",
+  "editor.fontSize": 17,
+  "editor.fontFamily": "Cascadia Code, JetBrainsMono Nerd Font, Consolas, 'Courier New', monospace",
+  "editor.rulers": [ 80, 100, ],
+  "editor.lineNumbers": "relative",
+  "editor.tabSize": 2,
+  "editor.inlineSuggest.enabled": true,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "terminal.integrated.fontSize": 15,
+  "diffEditor.codeLens": true,
+
+  // ================================
+  // Vim
+  // ================================
+  "extensions.experimental.affinity": {
+    "vscodevim.vim": 1
+  },
+  "vim.easymotion": true,
+  "vim.hlsearch": true,
+  "vim.incsearch": true,
+  "vim.useCtrlKeys": true,
+  "vim.useSystemClipboard": true,
+  "vim.highlightedyank.enable": true,
+  "vim.smartRelativeLine": true,
+  "vim.handleKeys": {
+    "<C-pageup>": false,      // Quarto=prev block
+    "<C-pagedown>": false,    // Quarto=next block
+  },
+  
+  // ================================
+  // Git
+  // ================================
+  "git.autofetch": true,
+  "git.openRepositoryInParentFolders": "never",
+  "git.confirmSync": false,
+
+  // ================================
+  // AI
+  // ================================
+  "geminicodeassist.inlineSuggestions.enableAuto": true,
+  "geminicodeassist.languages": [ "r", "python" ],
+
+  // ================================
+  // Programming Language Specific
+  // ================================
+  "[quarto]": {
+    "editor.formatOnPaste": true,
+    "editor.wordWrap": "off"
+  },
+  "[r]": {
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
+  },
+
+  // ================================
+  // Other & Extensions
+  // ================================
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "extensions.ignoreRecommendations": true,
+  "files.associations": {
+    "renv.lock": "json"
+  },
+  "quarto.render.previewType": "external",
+  "notebook.cellToolbarVisibility": "hover",
+  "remote.autoForwardPortsSource": "hybrid",
+  "pasteImage.basePath": "${currentFileDir}/img",
+  "pasteImage.namePrefix": "img",
+  "pasteImage.showFilePathConfirmInputBox": true,
+  "todohighlight.keywords": [
+    "DO:",
+    "FIX:",
+    "NOTE:",
+    "eval:",
+    "params:"
+  ],
+}
