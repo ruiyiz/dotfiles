@@ -17,4 +17,16 @@
     "command": "workbench.action.positronConsole.clearConsole",
     "when": "isPositron && (positronConsoleFocused || editorTextFocus)"
   },
+  {
+    "key": "ctrl-shift-f10",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        "workbench.action.positronConsole.clearConsole",
+        "workbench.action.language.runtime.restartActiveSession",
+        "workbench.action.focusActiveEditorGroup"
+      ]
+    },
+    "when": "isPositron"
+  },
 ]
