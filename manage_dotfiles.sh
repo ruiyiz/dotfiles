@@ -1,18 +1,24 @@
 #!/bin/bash
 
 # List of directories to manage
-DIRS=("nvim" "emacs" "git" "tmux" "zsh" "wezterm")
+DIRS=("emacs" "git" "tmux" "zsh" "wezterm" "claude")
 
 # Check if parameter is provided
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 [stow|unstow]"
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    echo "Usage: $0 [stow|unstow] [--adopt]"
     exit 1
+fi
+
+# Check for --adopt flag
+ADOPT_FLAG=""
+if [ "$2" = "--adopt" ]; then
+    ADOPT_FLAG="--adopt"
 fi
 
 # Process based on parameter
 case "$1" in
     "stow")
-        ACTION=""
+        ACTION="$ADOPT_FLAG"
         echo "Stowing dotfiles..."
         ;;
     "unstow")

@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run test)",
+      "Bash(git add:*)",
+      "Bash(python3:*)",
+      "Bash(./manage_dotfiles.sh:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(**/.env*)",
+      "Read(**/secrets/**)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm publish:*)",
+      "Bash(brew install:*)",
+      "WebFetch"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "includeCoAuthoredBy": false,
+  "hooks": {
+    "pre-tool": {
+      "Bash": "echo 'Running bash command...'"
+    }
+  }
+}
