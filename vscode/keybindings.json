@@ -31,6 +31,11 @@
     "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
+    "key": "space g t", // [G]o to Symbol in Workspace
+    "command": "workbench.action.showAllSymbols",
+    "when": "vim.mode == 'Normal' && editorTextFocus"
+  },
+  {
     "key": "space f f", // [F]ind [F]ile
     "command": "workbench.action.quickOpen",
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
