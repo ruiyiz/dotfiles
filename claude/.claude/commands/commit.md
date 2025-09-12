@@ -1,4 +1,4 @@
-ADD all modified and new files to git.
+ADD all modified and new files to git in all repositories.
 
 If you think there are files that should not be in version control, ask the user.
 
