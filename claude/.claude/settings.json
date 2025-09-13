@@ -26,10 +26,5 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "includeCoAuthoredBy": false,
-  "hooks": {
-    "pre-tool": {
-      "Bash": "echo 'Running bash command...'"
-    }
-  }
+  "includeCoAuthoredBy": false
 }
