@@ -28,14 +28,18 @@ end
 config.initial_cols = 120
 config.initial_rows = 60
 
-config.keys = {
-	-- Turn off the default CMD-m Hide action, allowing CMD-m to
+config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
 	-- be potentially recognized and handled by the tab
 	{
 		key = "Enter",
 		mods = "ALT",
-		action = wezterm.action.DisableDefaultAssignment,
+		action = wezterm.action.DisableDefaultAssignment
 	},
+  {
+		key="Enter",
+		mods="SHIFT",
+		action=wezterm.action{SendString="\x1b\r"}
+	}
 }
 
 -- Check if we're running on Windows and set WSL as default domain if so
@@ -45,3 +49,4 @@ end
 
 -- and finally, return the configuration to wezterm
 return config
+
