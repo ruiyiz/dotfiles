@@ -99,8 +99,10 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias emacs="emacs --init-directory=$HOME/.config/emacs"
-alias e="emacs -nw"
+alias vi="nvim"
+
+alias l="eza -l --group-directories-first"
+alias ls="eza -x --group-directories-first"
 
 # Include ~/.local/bin/ in search path
 . "$HOME/.local/bin/env"
