@@ -50,11 +50,19 @@ The zsh configuration includes:
 ## Key Configuration Details
 
 ### Neovim Setup
-- Uses Lazy.nvim plugin manager
-- LSP configuration with Mason for language server management
-- Telescope for fuzzy finding
-- Custom keybindings with space as leader key
-- Plugins: gitsigns, which-key, conform.nvim, nvim-cmp, mini.nvim, treesitter
+- **Architecture**: Custom minimal config (not Kickstart.nvim based)
+- **Plugin Manager**: Lazy.nvim with automatic bootstrapping
+- **Colorscheme**: Catppuccin Mocha (dark, warm theme)
+- **Leader Key**: Space (matches VS Code workflow)
+- **Core Plugins**:
+  - Treesitter: Syntax highlighting for Python, R, SQL, Markdown, Lua
+  - Telescope: Fuzzy finding (files, live grep, buffers, recent files)
+  - Which-key: Keybinding hints and discovery
+  - Gitsigns: Git integration with sign column and hunk operations
+  - Bufferline: IDE-style tab bar for visual buffer management
+  - Lualine: Informative statusline with mode, git, diagnostics
+- **Focus**: Data science and light terminal editing (Python, R, SQL, Markdown)
+- **Key Features**: Space-leader workflow, buffer-centric navigation, git integration
 
 ### VS Code Configuration
 - **Cross-platform deployment**: Supports macOS, Linux, and Windows
