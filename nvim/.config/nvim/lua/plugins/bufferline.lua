@@ -34,7 +34,7 @@ return {
         separator_style = "thin",
 
         -- Show buffer numbers for easy navigation (1, 2, 3, etc.)
-        numbers = "ordinal",
+        -- numbers = "ordinal",
 
         -- Show close button on tabs
         show_close_icon = true,
