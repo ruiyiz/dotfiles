@@ -71,9 +71,6 @@
   "quarto.render.previewType": "external",
   "notebook.cellToolbarVisibility": "hover",
   "remote.autoForwardPortsSource": "hybrid",
-  "pasteImage.basePath": "${currentFileDir}/img",
-  "pasteImage.namePrefix": "img",
-  "pasteImage.showFilePathConfirmInputBox": true,
   "todohighlight.keywords": [
     "DO:",
     "FIX:",

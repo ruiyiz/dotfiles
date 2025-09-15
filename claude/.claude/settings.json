@@ -1,12 +1,18 @@
 {
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(npm run lint)",
       "Bash(npm run typecheck)",
       "Bash(npm run test)",
       "Bash(git add:*)",
+      "Bash(jq:*)",
+      "Bash(quarto render:*)",
+      "Bash(sed:*)",
       "Bash(python3:*)",
-      "Bash(./manage_dotfiles.sh:*)"
+      "Bash(Rscript:*)",
+      "Bash(./manage_dotfiles.sh:*)",
+      "WebSearch"
     ],
     "deny": [
       "Read(./.env)",
@@ -26,5 +32,5 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "includeCoAuthoredBy": false
+  "model": "opusplan"
 }
