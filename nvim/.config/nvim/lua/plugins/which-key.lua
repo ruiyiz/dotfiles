@@ -24,7 +24,7 @@ return {
     require("which-key").setup({
       -- How long to wait (in milliseconds) before showing the popup
       -- 500ms is a good balance - not too fast to be annoying, not too slow to be helpful
-      delay = 100,
+      delay = 500,
 
       -- Other useful options you can enable:
       preset = "modern",     -- Use modern preset for styling
