@@ -21,15 +21,15 @@ ZSH_THEME="robbyrussell"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+HYPHEN_INSENSITIVE="true"
 
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
+zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
+zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
@@ -76,6 +76,43 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# OS Detection Function
+detect_os() {
+    local uname_out="$(uname -s)"
+
+    case "$uname_out" in
+        Darwin*)
+            OS_TYPE="macos"
+            ;;
+        Linux*)
+            # Check for WSL using improved detection method
+            if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop ]] || [[ -n "$WSL_DISTRO_NAME" ]]; then
+                OS_TYPE="wsl"
+            else
+                OS_TYPE="linux"
+            fi
+            ;;
+        CYGWIN*|MINGW*|MSYS*)
+            OS_TYPE="windows"
+            ;;
+        *)
+            OS_TYPE="unknown"
+            ;;
+    esac
+
+    # Set boolean helpers for easy conditional checking
+    IS_MACOS=$([[ "$OS_TYPE" == "macos" ]] && echo true || echo false)
+    IS_LINUX=$([[ "$OS_TYPE" == "linux" ]] && echo true || echo false)
+    IS_WSL=$([[ "$OS_TYPE" == "wsl" ]] && echo true || echo false)
+    IS_WINDOWS=$([[ "$OS_TYPE" == "windows" ]] && echo true || echo false)
+
+    # Export variables for use in subshells
+    export OS_TYPE IS_MACOS IS_LINUX IS_WSL IS_WINDOWS
+}
+
+# Initialize OS detection
+detect_os
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -99,16 +136,22 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
 alias vi="nvim"
 
 alias l="eza -l --group-directories-first"
 alias ls="eza -x --group-directories-first"
 
-# Include ~/.local/bin/ in search path
-. "$HOME/.local/bin/env"
-
-# doom emacs binary path
-export PATH="$HOME/.config/emacs/bin:$PATH"
+# add binaries to PATH if they aren't added yet
+# affix colons on either side of $PATH to simplify matching
+case ":${PATH}:" in
+    *:"$HOME/.local/bin":*)
+        ;;
+    *)
+        # Prepending path in case a system-installed binary needs to be overridden
+        export PATH="$HOME/.local/bin:$PATH"
+        ;;
+esac
 
 # fzf config
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -116,7 +159,7 @@ export PATH="$HOME/.config/emacs/bin:$PATH"
 # Start keychain and add all id_* keys, but only on Linux systems
 # NOTE: install keychain:
 #   sudo apt install keychain
-if [ "$(uname)" = "Linux" ]; then
+if [[ "$IS_LINUX" == "true" ]]; then
     if [ -x "$(command -v keychain)" ]; then
         # Find all private keys in .ssh directory that start with id_
         # (excluding .pub files which are the public keys)
@@ -131,6 +174,12 @@ if [ "$(uname)" = "Linux" ]; then
     fi
 fi
 
+# Unlock macOS keychain when connected via SSH
+# SSH sessions don't have access to unlocked keychain, causing apps to fail accessing stored credentials
+if [[ "$IS_MACOS" == "true" ]] && [ -n "$SSH_CONNECTION" ]; then
+    security unlock-keychain ~/Library/Keychains/login.keychain-db
+fi
+
 # yazi
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -141,7 +190,7 @@ function y() {
     rm -f -- "$tmp"
 }
 
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
