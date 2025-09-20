@@ -174,12 +174,17 @@ if [[ "$IS_LINUX" == "true" ]]; then
     fi
 fi
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# Load Homebrew environment only if it exists
+if [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 # Unlock macOS keychain when connected via SSH
 # SSH sessions don't have access to unlocked keychain, causing apps to fail accessing stored credentials
-if [[ "$IS_MACOS" == "true" ]] && [ -n "$SSH_CONNECTION" ]; then
+# Ref: https://github.com/anthropics/claude-code/issues/1222#issuecomment-3164503563
+if [[ "$IS_MACOS" == "true" ]] && [ -n "$SSH_CONNECTION" ] && [ -z "$KEYCHAIN_UNLOCKED" ]; then
     security unlock-keychain ~/Library/Keychains/login.keychain-db
+    export KEYCHAIN_UNLOCKED=true
 fi
 
 # yazi
@@ -195,6 +200,4 @@ function y() {
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-export PATH="$HOME/.local/bin:$PATH"
 
