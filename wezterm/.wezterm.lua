@@ -10,7 +10,7 @@ local config = wezterm.config_builder()
 -- config.color_scheme = 'AdventureTime'
 
 -- Set font
-config.font = wezterm.font("JetBrainsMono Nerd Font")
+config.font = wezterm.font("JetBrainsMono Nerd Font Mono")
 
 -- Set font size based on the operating system
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
@@ -44,7 +44,7 @@ config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
 
 -- Check if we're running on Windows and set WSL as default domain if so
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-	config.default_domain = "WSL:Ubuntu-24.04"
+	config.default_domain = "WSL:Ubuntu"
 end
 
 -- and finally, return the configuration to wezterm

@@ -1,15 +1,14 @@
 [user]
     name = Ruiyi Zhang
     email = ruiyizhang@gmail.com
-[alias]
-    br = branch
-    co = checkout
-    st = status
 [push]
     default = simple
-
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+[core]
+	autocrlf = input
+[pull]
+	ff = only
