@@ -154,7 +154,7 @@
   // FILE TREE
   // ================================
   {
-    "key": "space e",
+    "key": "space f e",
     "command": "runCommands",
     "args": {
       "commands": [
@@ -165,7 +165,7 @@
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && !sideBarFocus"
   },
   {
-    "key": "space e",
+    "key": "space f e",
     "command": "runCommands",
     "args": {
       "commands": [
@@ -176,7 +176,7 @@
     "when": "sideBarFocus && !inputFocus"
   },
   {
-    "key": "space e",
+    "key": "space f e",
     "command": "workbench.action.toggleSidebarVisibility",
     "when": "vim.mode == 'Normal' && editorTextFocus && foldersViewVisible"
   },

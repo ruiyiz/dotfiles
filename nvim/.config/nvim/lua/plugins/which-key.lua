@@ -40,7 +40,7 @@ return {
       { "<leader>bm", group = "[M]ove" },     -- <space>bm shows buffer move operations
       { "<leader>bc", group = "[C]lose" },    -- <space>bc shows buffer close operations
 
-      -- Find operations (telescope integration)
+      -- Find operations (telescope and neotree integration)
       { "<leader>f", group = "[F]ind" },      -- <space>f shows find operations
 
       -- Git operations (gitsigns integration)
