@@ -12,6 +12,7 @@
   "editor.lineNumbers": "relative",
   "editor.tabSize": 2,
   "editor.inlineSuggest.enabled": true,
+  "markdown.preview.fontSize": 17,
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,
   "terminal.integrated.fontSize": 15,
