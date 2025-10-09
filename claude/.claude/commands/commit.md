@@ -2,7 +2,7 @@ ADD all modified and new files to git in the specified repository, or all workin
 
 If you think files should be bundled into separate commits for logical grouping, ask the user.
 
-THEN commit with a clear and concise one-line commit message using semantic commit notation with scope when applicable (e.g., "feat(auth): add user login", "fix(api): handle null responses").
+Then commit with a clear and concise ONE-LINE commit message using semantic commit notation with scope when applicable (e.g., "feat(auth): add user login", "fix(api): handle null responses").
 
 When you make a commit, always include an explicit `cd` command to make it clear which working directory is being affected.
 
