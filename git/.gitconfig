@@ -12,3 +12,5 @@
 	autocrlf = input
 [pull]
 	ff = only
+[credential]
+	helper = cache
