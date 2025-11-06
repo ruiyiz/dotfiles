@@ -142,6 +142,8 @@ alias vi="nvim"
 alias l="eza -l --group-directories-first"
 alias ls="eza -x --group-directories-first"
 
+alias suk="security unlock-keychain"
+
 # add binaries to PATH if they aren't added yet
 # affix colons on either side of $PATH to simplify matching
 case ":${PATH}:" in
@@ -182,10 +184,10 @@ fi
 # Unlock macOS keychain when connected via SSH
 # SSH sessions don't have access to unlocked keychain, causing apps to fail accessing stored credentials
 # Ref: https://github.com/anthropics/claude-code/issues/1222#issuecomment-3164503563
-if [[ "$IS_MACOS" == "true" ]] && [ -n "$SSH_CONNECTION" ] && [ -z "$KEYCHAIN_UNLOCKED" ]; then
-    security unlock-keychain ~/Library/Keychains/login.keychain-db
-    export KEYCHAIN_UNLOCKED=true
-fi
+# if [[ "$IS_MACOS" == "true" ]] && [ -n "$SSH_CONNECTION" ] && [ -z "$KEYCHAIN_UNLOCKED" ]; then
+#     security unlock-keychain ~/Library/Keychains/login.keychain-db
+#     export KEYCHAIN_UNLOCKED=true
+# fi
 
 # yazi
 function y() {
