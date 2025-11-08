@@ -8,7 +8,7 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.startupEditor": "none",
   "editor.fontSize": 17,
-  "editor.fontFamily": "Cascadia Code, JetBrainsMono Nerd Font, Menlo, Consolas, 'Courier New', monospace",
+  "editor.fontFamily": "Cascadia Code, JetBrainsMono Nerd Font Mono, Menlo, Consolas, 'Courier New', monospace",
   "editor.rulers": [ 80, 100, ],
   "editor.lineNumbers": "relative",
   "editor.tabSize": 2,
@@ -17,6 +17,7 @@
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,
   "terminal.integrated.fontSize": 15,
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font Mono",
   "diffEditor.codeLens": true,
 
   // ================================
