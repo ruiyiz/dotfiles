@@ -44,7 +44,7 @@ config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
 
 -- Check if we're running on Windows and set WSL as default domain if so
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-	config.default_domain = "WSL:Ubuntu"
+	config.default_prog = {"wsl.exe", "--distribution", "Ubuntu", "--cd", "~"}
 
 	-- Configure launch menu with PowerShell and Git Bash
 	config.launch_menu = {
