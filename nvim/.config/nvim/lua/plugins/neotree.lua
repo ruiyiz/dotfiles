@@ -14,6 +14,9 @@ return {
     { "<leader>fe", ":Neotree toggle<CR>", desc = "NeoTree" },
   },
   opts = {
+    window = {
+      position = "float", -- Open as floating window instead of split
+    },
     filesystem = {
       window = {
         mappings = {
