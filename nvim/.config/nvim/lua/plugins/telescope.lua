@@ -40,6 +40,19 @@ return {
     -- Setup telescope with custom options
     require("telescope").setup({
       defaults = {
+        -- Show hidden files but exclude certain patterns
+        vimgrep_arguments = {
+          "rg",
+          "--color=never",
+          "--no-heading",
+          "--with-filename",
+          "--line-number",
+          "--column",
+          "--smart-case",
+          "--hidden", -- Search hidden files
+          "--glob=!.git/", -- Exclude .git directory
+        },
+
         -- Keybindings inside telescope picker
         mappings = {
           i = { -- Insert mode mappings
@@ -50,11 +63,17 @@ return {
           },
         },
 
-        -- Other useful defaults you can configure:
-        -- file_ignore_patterns = { "node_modules", ".git/" }, -- Ignore these patterns
-        -- layout_config = {
-        --   horizontal = { preview_width = 0.6 },
-        -- },
+        -- Ignore these patterns when searching
+        file_ignore_patterns = { "^.git/" },
+      },
+
+      -- Specific configuration for find_files picker
+      pickers = {
+        find_files = {
+          hidden = true, -- Show hidden files
+          -- Additional ripgrep arguments for find_files
+          find_command = { "rg", "--files", "--hidden", "--glob", "!.git/" },
+        },
       },
     })
 
