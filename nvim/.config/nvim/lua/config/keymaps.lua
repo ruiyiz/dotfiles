@@ -71,6 +71,50 @@ keymap("n", "<S-Tab>", "<cmd>bprevious<cr>", { desc = "Previous buffer" }) -- Sh
 keymap("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Delete buffer" })
 
 -- ╭─────────────────────────────────────────────────────────────────────────╮
+-- │                         SMART QUIT BEHAVIOR                             │
+-- ╰─────────────────────────────────────────────────────────────────────────╯
+-- Prevent accidental quit when habitually typing :q
+-- Smart behavior: close buffer if multiple buffers exist, otherwise quit Neovim
+-- This mimics modern editors with tabs - :q closes the "tab", not the entire editor
+local function smart_quit()
+  -- Get list of buffers that are listed (visible in buffer list)
+  local buffers = vim.fn.getbufinfo({ buflisted = 1 })
+
+  -- Count how many real buffers we have (exclude empty unnamed buffers)
+  local real_buffers = 0
+  for _, buf in ipairs(buffers) do
+    -- A real buffer has either a name or has been modified
+    if buf.name ~= "" or buf.changed == 1 then
+      real_buffers = real_buffers + 1
+    end
+  end
+
+  -- If we have more than one real buffer, just close the current buffer
+  if real_buffers > 1 then
+    vim.cmd("bdelete")
+  else
+    -- Otherwise, quit Neovim
+    vim.cmd("quit")
+  end
+end
+
+-- Remap :q command to use smart quit
+-- Use command! to override the built-in :q command
+vim.api.nvim_create_user_command("Q", smart_quit, { desc = "Smart quit (close buffer or quit Neovim)" })
+
+-- Also create an autocmd to remap the lowercase :q
+vim.api.nvim_create_user_command("SmartQ", smart_quit, { desc = "Smart quit (close buffer or quit Neovim)" })
+
+-- Create command abbreviation so :q becomes :SmartQ
+-- This works in command mode and triggers when you type :q followed by Enter
+vim.cmd([[
+  cnoreabbrev <expr> q ((getcmdtype() is# ':' && getcmdline() is# 'q')?('SmartQ'):('q'))
+  cnoreabbrev <expr> Q ((getcmdtype() is# ':' && getcmdline() is# 'Q')?('SmartQ'):('Q'))
+]])
+
+-- Note: :q! and :qa still work as normal for force quit and quit all
+
+-- ╭─────────────────────────────────────────────────────────────────────────╮
 -- │                            VISUAL MODE                                  │
 -- ╰─────────────────────────────────────────────────────────────────────────╯
 -- Move selected lines up/down in visual mode (matches your VS Code Shift+K/J)
