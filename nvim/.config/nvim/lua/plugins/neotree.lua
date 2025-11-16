@@ -18,6 +18,14 @@ return {
       position = "float", -- Open as floating window instead of split
     },
     filesystem = {
+      filtered_items = {
+        visible = true, -- Show hidden files and directories
+        hide_dotfiles = false, -- Don't hide dotfiles
+        hide_gitignored = false, -- Don't hide gitignored files
+        hide_by_name = {
+          ".git", -- Still hide .git directory
+        },
+      },
       window = {
         mappings = {
           ["<space>"] = "none",
