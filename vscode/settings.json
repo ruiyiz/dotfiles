@@ -3,7 +3,6 @@
   // Core
   // ================================
   "window.newWindowProfile": "Default",
-  "window.restoreWindows": "none",
   "workbench.colorTheme": "Gruvbox Dark Hard",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.startupEditor": "none",
