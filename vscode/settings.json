@@ -47,18 +47,8 @@
   // ================================
   // Theme & Appearance
   // ================================
-  "workbench.colorCustomizations": {
-    // Editor group borders
-    "editorGroup.border": "#fabd2f",
-    "editorGroup.focusedEmptyBorder": "#fabd2f",
-    "tab.activeBorder": "#fabd2f",
-    "tab.unfocusedActiveBorder": "#665c54",
-    // Panel borders (terminal, output, debug console, etc.)
-    "panel.border": "#fabd2f",
-    // Sidebar borders (file explorer, search, etc.)
-    "sideBar.border": "#fabd2f",
-    "sideBarSectionHeader.border": "#fabd2f"
-  },
+  "accessibility.dimUnfocused.enabled": true,          // Dim unfocused editors/terminals
+  "accessibility.dimUnfocused.opacity": 0.6,           // Opacity for unfocused areas (60% dimmed)
 
   // ================================
   // AI
