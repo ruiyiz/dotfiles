@@ -48,7 +48,7 @@
   // Theme & Appearance
   // ================================
   "accessibility.dimUnfocused.enabled": true,          // Dim unfocused editors/terminals
-  "accessibility.dimUnfocused.opacity": 0.6,           // Opacity for unfocused areas (60% dimmed)
+  "accessibility.dimUnfocused.opacity": 0.7,           // Opacity for unfocused areas (70% dimmed)
 
   // ================================
   // AI
