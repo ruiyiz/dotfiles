@@ -11,8 +11,10 @@
       "Bash(sed:*)",
       "Bash(python3:*)",
       "Bash(Rscript:*)",
-      "Bash(./manage_dotfiles.sh:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(echo:*)",
+      "Bash(cmd.exe /c echo %TEMP%)",
+      "SlashCommand(/label-quarto-cells:*)"
     ],
     "deny": [
       "Read(./.env)",
