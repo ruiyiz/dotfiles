@@ -87,4 +87,6 @@
     "eval:",
     "params:"
   ],
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.initialPermissionMode": "bypassPermissions",
 }
