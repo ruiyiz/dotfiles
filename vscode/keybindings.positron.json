@@ -19,4 +19,9 @@
     },
     "when": "isPositron"
   },
+  {
+    "key": "space g c", // [G]o to [C]onsole
+    "command": "workbench.action.positronConsole.focusConsole",
+    "when": "isPositron && vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+  }
 ]
