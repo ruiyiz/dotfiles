@@ -45,11 +45,7 @@ done
 if [ -f "manage_vscode_config.py" ] && [ -d "vscode" ]; then
     echo ""
     echo "Managing VS Code configurations..."
-    if [ "$1" = "stow" ]; then
-        python3 manage_vscode_config.py deploy
-    else
-        python3 manage_vscode_config.py remove
-    fi
+    python3 manage_vscode_config.py "$1"
 fi
 
 echo "Done!"

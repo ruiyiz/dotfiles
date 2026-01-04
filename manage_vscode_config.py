@@ -352,25 +352,25 @@ class VSCodeConfigManager:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description='Manage VS Code configuration files')
-    parser.add_argument('action', choices=['deploy', 'remove'],
-                       help='Action to perform: deploy or remove VS Code configs')
+    parser.add_argument('action', choices=['stow', 'unstow'],
+                       help='Action to perform: stow or unstow VS Code configs')
     parser.add_argument('--dotfiles-dir', type=Path, default=Path.cwd(),
                        help='Path to dotfiles directory (default: current directory)')
-    
+
     args = parser.parse_args()
-    
+
     try:
         manager = VSCodeConfigManager(args.dotfiles_dir)
-        
-        if args.action == 'deploy':
-            print("Deploying VS Code configurations...")
-            manager.deploy_vscode_configs()
-            print("\nDeployment completed!")
 
-        elif args.action == 'remove':
-            print("Removing VS Code configurations...")
+        if args.action == 'stow':
+            print("Stowing VS Code configurations...")
+            manager.deploy_vscode_configs()
+            print("\nStowing completed!")
+
+        elif args.action == 'unstow':
+            print("Unstowing VS Code configurations...")
             manager.remove_vscode_configs()
-            print("\nRemoval completed!")
+            print("\nUnstowing completed!")
 
     except Exception as e:
         print(f"Error: {e}")
