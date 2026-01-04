@@ -32,6 +32,11 @@
       "Bash(brew install:*)",
       "WebFetch"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "bypassPermissions"
+  },
+  "enabledPlugins": {
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true
   }
 }
