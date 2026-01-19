@@ -144,8 +144,6 @@ alias ls="eza -x --group-directories-first"
 
 alias suk="security unlock-keychain"
 
-alias claudio="claude --dangerously-skip-permissions"
-
 # add binaries to PATH if they aren't added yet
 # affix colons on either side of $PATH to simplify matching
 case ":${PATH}:" in
