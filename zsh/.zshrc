@@ -206,3 +206,10 @@ export NVM_DIR="$HOME/.nvm"
 
 # Added by Antigravity
 export PATH="/Users/ruiyiz/.antigravity/antigravity/bin:$PATH"
+
+# bun completions
+[ -s "/Users/ruiyiz/.bun/_bun" ] && source "/Users/ruiyiz/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
