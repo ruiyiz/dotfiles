@@ -45,8 +45,8 @@ return {
         which_key = true,               -- Style which-key popup
         gitsigns = true,                -- Style git signs in gutter
         bufferline = true,              -- Style bufferline tabs
+        cmp = true,                     -- Style completion popup
         -- Add more integrations as you install plugins:
-        -- cmp = true,                  -- For completion popup
         -- lsp_trouble = true,          -- For diagnostics
       },
     },
