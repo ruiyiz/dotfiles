@@ -204,12 +204,23 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 
-# Added by Antigravity
-export PATH="/Users/ruiyiz/.antigravity/antigravity/bin:$PATH"
-
 # bun completions
-[ -s "/Users/ruiyiz/.bun/_bun" ] && source "/Users/ruiyiz/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# pnpm (macOS uses ~/Library/pnpm, Linux uses ~/.local/share/pnpm)
+if [[ "$IS_MACOS" == "true" ]]; then
+    export PNPM_HOME="$HOME/Library/pnpm"
+else
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+fi
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# Source local overrides (machine-specific config not tracked in git)
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
