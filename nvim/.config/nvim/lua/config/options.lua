@@ -76,3 +76,18 @@ vim.opt.clipboard:append("unnamedplus")
 -- Enable mouse support in all modes (normal, visual, insert, command)
 -- Useful for clicking to position cursor, scrolling, selecting text
 vim.opt.mouse = "a"
+
+-- ╭─────────────────────────────────────────────────────────────────────────╮
+-- │                            SOFT WRAP                                    │
+-- │                                                                         │
+-- │ Enable soft wrap for prose-oriented filetypes (markdown, text, quarto) │
+-- │ while keeping wrap off for code files (the default set above).         │
+-- ╰─────────────────────────────────────────────────────────────────────────╯
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "quarto", "rst", "tex", "latex", "gitcommit" },
+  callback = function()
+    vim.opt_local.wrap = true       -- Enable soft wrap
+    vim.opt_local.linebreak = true  -- Wrap at word boundaries, not mid-word
+    vim.opt_local.breakindent = true -- Preserve indentation on wrapped lines
+  end,
+})
