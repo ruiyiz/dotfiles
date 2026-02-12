@@ -25,6 +25,7 @@ box::use(utils/utils)
 
 utils$wait_for_user("Message to display")
 utils$prompt_execute("Description", function() { ... })
+utils$prompt_select("Description:", c(label1 = "val1", label2 = "val2"))
 ```
 
 ## Chunk Conversion Rules
@@ -38,16 +39,27 @@ utils$prompt_execute("Description", function() { ... })
    - Wrap the chunk body in `utils$prompt_execute("Description", function() { ... })`
    - Use `<<-` for assignments that need to persist outside the function scope
 
-3. **Manual intervention points** (comments like "open and revise", "export to Excel"):
+3. **Hardcoded literal values** (e.g., `output_mode = "m"`, `target_year = 2024`):
+   - Replace with `utils$prompt_select()` when there is a fixed set of valid choices
+   - Display labels and validate selection; first choice is the default
+   - Use named vectors for descriptive labels: `c("Monthly" = "m", "Quarterly" = "q")`
+   - For free-form values (dates, numbers), use `readline()` with validation
+
+4. **Boolean decision guards** (e.g., `if (save_excel) { ... }`):
+   - Remove the boolean variable, its YAML param, and the `if` wrapper
+   - `prompt_execute` replaces the guard -- the y/n prompt is the decision point
+   - Remove the variable from dev/prod parameter blocks as well
+
+5. **Manual intervention points** (comments like "open and revise", "export to Excel"):
    - Add `utils$wait_for_user("Description of what user should do before continuing")`
    - Place AFTER the action that opens/creates something, BEFORE code that depends on user completion
    - **`utils$open()` typically requires `wait_for_user()`** - whether opening a file for editing or a directory for user action, pause before proceeding, always add a wait
    - **Skip `wait_for_user` if the next action is `prompt_execute`** - the y/n prompt serves as the continue signal; instead, add a reminder to the prompt description (e.g., "Copy X - paste before continuing")
 
-4. **Data checks** (print statements showing results):
+6. **Data checks** (print statements showing results):
    - Add header before print: `message("\n## Check Name")`
 
-5. **Section boundaries** (markdown headers or major transitions):
+7. **Section boundaries** (markdown headers or major transitions):
    - Add section markers in code: `message("\n--- Section Name ---")`
 
 ## Patterns
@@ -68,6 +80,41 @@ utils$prompt_execute("Run expensive operation", function() {
   pins$write(result, "lib", "name")
 })
 ```
+
+### Replacing hardcoded literal values
+
+Before:
+```r
+## options: m, q, ytd, 1y
+output_mode = "m"
+```
+
+After:
+```r
+output_mode = utils$prompt_select(
+  "Select output mode:",
+  c(m = "m", q = "q", ytd = "ytd", `1y` = "1y")
+)
+```
+
+### Replacing boolean decision guards
+
+Before:
+```r
+#| eval: false
+if (save_excel) {
+  write_output(result)
+}
+```
+
+After:
+```r
+utils$prompt_execute("Save Excel output", function() {
+  write_output(result)
+})
+```
+
+Also remove the boolean from YAML params and the parameters chunk.
 
 ### File/directory open requiring user action
 
@@ -99,15 +146,29 @@ if (nrow(missing) > 0) {
 }
 ```
 
-### Sequential clipboard operations (no wait needed)
+### Clipboard operations
 
-When multiple operations copy to clipboard in sequence, the y/n prompt of the next `prompt_execute` serves as the continue signal:
+All `write_clipboard` operations copy then `wait_for_user`. Only the **first** is wrapped in `prompt_execute` (gateway decision to enter the clipboard workflow):
 
+First clipboard operation:
+```r
+utils$prompt_execute("Start clipboard paste workflow", function() {
+  data |> utils$write_clipboard()
+  utils$wait_for_user("Paste to sheet!A1")
+})
+```
+
+All subsequent:
+```r
+data |> utils$write_clipboard()
+utils$wait_for_user("Paste to sheet!B1")
+```
+
+Loop:
 ```r
 for (item in items) {
-  utils$prompt_execute(paste("Copy", item, "- paste before continuing"), function() {
-    data[Item == item] |> utils$write_clipboard()
-  })
+  data[Item == item] |> utils$write_clipboard()
+  utils$wait_for_user(paste("Paste", item, "to tab"))
 }
 ```
 
