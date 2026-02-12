@@ -1,0 +1,6 @@
+- don't use chaining calls with data.table
+- avoid using readxl in the future, as it has performance issues, particularly in a WSL environment.
+- add minimal comments
+- don't use em dashes in prose writing
+- prefer the cli tool for duckdb interactions
+- when managing todos or tasks, use the `todo` CLI tool (see todo-cli skill)
