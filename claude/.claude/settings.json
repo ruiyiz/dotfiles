@@ -92,15 +92,15 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/tools/statusline.sh"
+  },
   "enabledPlugins": {
     "commit-commands@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true
   },
-  "skipDangerousModePermissionPrompt": true,
-  "statusLine": {
-    "type": "command",
-    "command": "$HOME/.claude/tools/statusline.sh"
-  }
+  "skipDangerousModePermissionPrompt": true
 }
