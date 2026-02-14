@@ -74,6 +74,38 @@ plugins=(git fzf)
 
 source $ZSH/oh-my-zsh.sh
 
+# Git prompt with detailed status (matches Claude Code statusline)
+_git_prompt_status() {
+    git rev-parse --git-dir >/dev/null 2>&1 || return
+
+    local branch=$(git branch --show-current 2>/dev/null)
+    [ -z "$branch" ] && branch="detached"
+
+    local staged=$(GIT_OPTIONAL_LOCKS=0 git diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
+    local unstaged=$(GIT_OPTIONAL_LOCKS=0 git diff --numstat 2>/dev/null | wc -l | tr -d ' ')
+    local untracked=$(GIT_OPTIONAL_LOCKS=0 git ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+
+    local upstream=$(git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null)
+    local ahead=0 behind=0
+    if [ -n "$upstream" ]; then
+        ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null || echo 0)
+        behind=$(git rev-list --count 'HEAD..@{upstream}' 2>/dev/null || echo 0)
+    fi
+
+    local info="%{$fg_bold[blue]%}(%{$fg[red]%}${branch}%{$fg_bold[blue]%})"
+    [ "$ahead" -gt 0 ] && info+=" %F{249}↑${ahead}%f"
+    [ "$behind" -gt 0 ] && info+=" %F{249}↓${behind}%f"
+    [ "$staged" -gt 0 ] && info+=" %F{173}✓${staged}%f"
+    [ "$unstaged" -gt 0 ] && info+=" %F{141}✎${unstaged}%f"
+    [ "$untracked" -gt 0 ] && info+=" %F{249}+${untracked}%f"
+
+    echo -n " $info%{$reset_color%}"
+}
+
+PROMPT="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ ) %{$fg[cyan]%}%c%{$reset_color%}"
+PROMPT+='$(_git_prompt_status)'
+PROMPT+=' '
+
 # User configuration
 
 # OS Detection Function
