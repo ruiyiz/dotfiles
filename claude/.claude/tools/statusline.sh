@@ -57,10 +57,10 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
 
     # Build git section: branch + ahead/behind + file stats
     git_section="${branch}"
-    [ "$ahead" -gt 0 ] || [ "$behind" -gt 0 ] && git_section+=" ${ahead_behind_color}↑${ahead} ↓${behind}${reset}"
-    [ "$staged" -gt 0 ] && git_section+=" ${staged_color}✓${staged}${reset}"
-    [ "$unstaged" -gt 0 ] && git_section+=" ${unstaged_color}✎${unstaged}${reset}"
-    [ "$untracked" -gt 0 ] && git_section+=" ${untracked_color}+${untracked}${reset}"
+    git_section+=" ${ahead_behind_color}↑${ahead} ↓${behind}${reset}"
+    git_section+=" ${staged_color}✓${staged}${reset}"
+    git_section+=" ${unstaged_color}✎${unstaged}${reset}"
+    git_section+=" ${untracked_color}+${untracked}${reset}"
 
     printf '%b' "${repo} | ${git_section} | ${ctx_color}${ctx_icon} ${ctx_pct}%${reset}"
 else
