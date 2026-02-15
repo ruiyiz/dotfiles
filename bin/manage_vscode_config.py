@@ -354,8 +354,9 @@ def main():
     parser = argparse.ArgumentParser(description='Manage VS Code configuration files')
     parser.add_argument('action', choices=['stow', 'unstow'],
                        help='Action to perform: stow or unstow VS Code configs')
-    parser.add_argument('--dotfiles-dir', type=Path, default=Path.cwd(),
-                       help='Path to dotfiles directory (default: current directory)')
+    default_dir = Path(__file__).resolve().parent.parent
+    parser.add_argument('--dotfiles-dir', type=Path, default=default_dir,
+                       help='Path to dotfiles directory (default: repo root)')
 
     args = parser.parse_args()
 

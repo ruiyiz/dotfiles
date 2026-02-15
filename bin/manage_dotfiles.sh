@@ -1,5 +1,8 @@
 #!/bin/bash
 
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_DIR"
+
 # List of directories to manage
 DIRS=("nvim" "git" "tmux" "zsh" "wezterm" "claude")
 
@@ -42,10 +45,10 @@ for dir in "${DIRS[@]}"; do
 done
 
 # Handle VS Code configurations separately (requires Python script)
-if [ -f "manage_vscode_config.py" ] && [ -d "vscode" ]; then
+if [ -f "bin/manage_vscode_config.py" ] && [ -d "vscode" ]; then
     echo ""
     echo "Managing VS Code configurations..."
-    python3 manage_vscode_config.py "$1"
+    python3 bin/manage_vscode_config.py "$1"
 fi
 
 echo "Done!"
