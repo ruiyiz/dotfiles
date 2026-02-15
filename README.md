@@ -12,6 +12,8 @@ The repository is organized modularly with each tool in its own directory:
 - **`git/`** - Git configuration with user settings and aliases
 - **`tmux/`** - Terminal multiplexer configuration
 - **`wezterm/`** - WezTerm terminal emulator configuration
+- **`bin/`** - Executable scripts (dotfile management, VS Code config deployment, tool installation)
+- **`install/`** - Package config files for tool installation
 - **`_archived/`** - Deprecated configuration files
 
 ## 🚀 Quick Start
@@ -23,21 +25,27 @@ The repository is organized modularly with each tool in its own directory:
 git clone <repository-url> ~/.dotfiles
 cd ~/.dotfiles
 
+# Install CLI/TUI tools
+./bin/install_tools.sh
+
 # Deploy all dotfiles
-./manage_dotfiles.sh stow
+./bin/manage_dotfiles.sh stow
 ```
 
 ### Individual Management
 
 ```bash
+# Install specific tools only
+./bin/install_tools.sh eza fd fzf
+
 # Remove dotfiles
-./manage_dotfiles.sh unstow
+./bin/manage_dotfiles.sh unstow
 
 # Deploy VS Code configurations separately
-python3 manage_vscode_config.py deploy
+python3 bin/manage_vscode_config.py deploy
 
 # Remove VS Code configurations
-python3 manage_vscode_config.py remove
+python3 bin/manage_vscode_config.py remove
 ```
 
 ## 🛠️ Tool Configurations
@@ -68,6 +76,15 @@ python3 manage_vscode_config.py remove
 ### Git
 - **Aliases**: `br` (branch), `co` (checkout), `st` (status)
 - **Features**: Custom user configuration
+
+### Tool Installation
+
+The `install/` directory provides a config-driven installation system:
+
+- **macOS**: Uses Homebrew (`packages_macos.conf` -- simple formula list)
+- **Ubuntu**: Uses mixed methods (`packages_ubuntu.conf` -- apt, GitHub releases, direct binaries, install scripts)
+
+The script is idempotent and reports a success/failure summary after each run.
 
 ## 📋 Requirements
 

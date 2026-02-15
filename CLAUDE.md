@@ -17,22 +17,30 @@ The repository follows a modular structure where each tool has its own directory
 - `tmux/` - Terminal multiplexer configuration
 - `emacs/` - Emacs configuration (Doom Emacs setup)
 - `wezterm/` - WezTerm terminal emulator configuration
+- `bin/` - Executable scripts (dotfile management, VS Code config deployment, tool installation)
+- `install/` - Package config files for tool installation (macOS and Ubuntu)
 - `_archived/` - Deprecated/archived configuration files
 
 ## Common Commands
 
 ### Dotfile Management
-- **Deploy dotfiles**: `./manage_dotfiles.sh stow`
-- **Remove dotfiles**: `./manage_dotfiles.sh unstow`
+- **Deploy dotfiles**: `./bin/manage_dotfiles.sh stow`
+- **Remove dotfiles**: `./bin/manage_dotfiles.sh unstow`
 
 The stow script manages these directories: nvim, emacs, git, tmux, zsh, wezterm
 
 ### VS Code Configuration Management
-- **Deploy VS Code configs**: `python3 manage_vscode_config.py deploy`
-- **Remove VS Code configs**: `python3 manage_vscode_config.py remove`
-- **Integrated deployment**: `./manage_dotfiles.sh stow` (deploys both stow configs and VS Code configs)
+- **Deploy VS Code configs**: `python3 bin/manage_vscode_config.py deploy`
+- **Remove VS Code configs**: `python3 bin/manage_vscode_config.py remove`
+- **Integrated deployment**: `./bin/manage_dotfiles.sh stow` (deploys both stow configs and VS Code configs)
 
 The VS Code script handles cross-platform deployment with derivative support (Positron, Code Server)
+
+### Tool Installation
+- **Install/update all tools**: `./bin/install_tools.sh`
+- **Install specific tools**: `./bin/install_tools.sh eza fd fzf`
+
+The install script auto-detects the OS and reads the appropriate config file (`packages_macos.conf` for Homebrew, `packages_ubuntu.conf` for Ubuntu with per-tool install methods including apt, GitHub releases, direct binaries, and install scripts).
 
 ### Shell Environment
 The zsh configuration includes:
