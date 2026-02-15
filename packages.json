@@ -1,0 +1,138 @@
+{
+  "taps": ["oven-sh/bun"],
+  "packages": {
+    "broot": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "binary_url",
+        "url": "https://dystroy.org/broot/download/{arch_uname}-linux/broot",
+        "binary": "broot"
+      }
+    },
+    "bun": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "script",
+        "url": "https://bun.sh/install"
+      }
+    },
+    "duckdb": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "script",
+        "url": "https://install.duckdb.org"
+      }
+    },
+    "eza": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "apt_repo",
+        "gpg_url": "https://raw.githubusercontent.com/eza-community/eza/main/deb.asc",
+        "keyring_name": "eza",
+        "repo_line": "deb [arch={arch_deb}] http://deb.gierens.de stable main",
+        "pkg": "eza"
+      }
+    },
+    "fd": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_deb",
+        "repo": "sharkdp/fd",
+        "asset": "fd_{ver}_{arch_deb}.deb"
+      }
+    },
+    "fzf": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_binary",
+        "repo": "junegunn/fzf",
+        "asset": "fzf-.*-linux_{arch_deb}.tar.gz",
+        "binary": "fzf"
+      }
+    },
+    "gh": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "apt_repo",
+        "gpg_url": "https://cli.github.com/packages/githubcli-archive-keyring.gpg",
+        "keyring_name": "gh",
+        "repo_line": "deb [arch={arch_deb}] https://cli.github.com/packages stable main",
+        "pkg": "gh"
+      }
+    },
+    "glow": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_deb",
+        "repo": "charmbracelet/glow",
+        "asset": "glow_{ver}_{arch_deb}.deb"
+      }
+    },
+    "htop": {
+      "macos": { "method": "brew" },
+      "debian": { "method": "apt" }
+    },
+    "jq": {
+      "macos": { "method": "brew" },
+      "debian": { "method": "apt" }
+    },
+    "lf": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_binary",
+        "repo": "gokcehan/lf",
+        "asset": "lf-linux-{arch_deb}.tar.gz",
+        "binary": "lf"
+      }
+    },
+    "neovim": {
+      "bin": "nvim",
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_tarball",
+        "repo": "neovim/neovim",
+        "asset": "nvim-linux-{arch_uname}.tar.gz",
+        "binary": "nvim",
+        "install_dir": "/opt/nvim"
+      }
+    },
+    "node": {
+      "macos": { "method": "brew" }
+    },
+    "pipx": {
+      "macos": { "method": "brew" },
+      "debian": { "method": "apt" }
+    },
+    "pnpm": {
+      "macos": { "method": "brew" }
+    },
+    "ripgrep": {
+      "bin": "rg",
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_deb",
+        "repo": "BurntSushi/ripgrep",
+        "asset": "ripgrep_{ver}-1_{arch_deb}.deb"
+      }
+    },
+    "stow": {
+      "macos": { "method": "brew" },
+      "debian": { "method": "apt" }
+    },
+    "uv": {
+      "debian": {
+        "method": "script",
+        "url": "https://astral.sh/uv/install.sh"
+      }
+    },
+    "zellij": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "github_binary",
+        "repo": "zellij-org/zellij",
+        "asset": "zellij-{arch_uname}-unknown-linux-musl.tar.gz",
+        "binary": "zellij"
+      }
+    }
+  }
+}

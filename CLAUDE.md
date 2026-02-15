@@ -18,7 +18,6 @@ The repository follows a modular structure where each tool has its own directory
 - `emacs/` - Emacs configuration (Doom Emacs setup)
 - `wezterm/` - WezTerm terminal emulator configuration
 - `bin/` - Executable scripts (dotfile management, VS Code config deployment, tool installation)
-- `install/` - Package config files for tool installation (macOS and Ubuntu)
 - `_archived/` - Deprecated/archived configuration files
 
 ## Common Commands
@@ -39,8 +38,9 @@ The VS Code script handles cross-platform deployment with derivative support (Po
 ### Tool Installation
 - **Install/update all tools**: `./bin/install_tools.sh`
 - **Install specific tools**: `./bin/install_tools.sh eza fd fzf`
+- **Force reinstall (skip installed check)**: `./bin/install_tools.sh --force`
 
-The install script auto-detects the OS and reads the appropriate config file (`packages_macos.conf` for Homebrew, `packages_ubuntu.conf` for Ubuntu with per-tool install methods including apt, GitHub releases, direct binaries, and install scripts).
+The install script auto-detects the platform (macOS or Debian family) and reads `packages.json` for per-tool install methods (brew, apt, GitHub releases, direct binaries, install scripts). Tools already on `$PATH` are skipped unless `--force` is used.
 
 ### Shell Environment
 The zsh configuration includes:

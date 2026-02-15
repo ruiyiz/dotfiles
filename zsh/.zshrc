@@ -70,7 +70,7 @@ zstyle ':omz:update' frequency 13
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf)
+plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -188,7 +188,9 @@ case ":${PATH}:" in
 esac
 
 # fzf config
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if command -v fzf &>/dev/null; then
+    eval "$(fzf --zsh)"
+fi
 
 # Start keychain and add all id_* keys, but only on Linux systems
 # NOTE: install keychain:
@@ -241,4 +243,6 @@ esac
 # Source local overrides (machine-specific config not tracked in git)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
-source /Users/ruiyiz/.config/broot/launcher/bash/br
+[ -f "$HOME/.config/broot/launcher/bash/br" ] && source "$HOME/.config/broot/launcher/bash/br"
+
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"

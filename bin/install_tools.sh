@@ -2,9 +2,7 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-FILTER_TOOLS=("$@")
 
-OS="$(uname -s)"
 ARCH="$(uname -m)"
 
 # Architecture mappings
@@ -14,12 +12,44 @@ case "$ARCH" in
     *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
 esac
 
+# Parse --force flag and positional args
+FORCE=false
+FILTER_TOOLS=()
+for arg in "$@"; do
+    case "$arg" in
+        --force) FORCE=true ;;
+        *) FILTER_TOOLS+=("$arg") ;;
+    esac
+done
+
 SUCCEEDED=()
 FAILED=()
+SKIPPED=()
 
 log()   { echo "==> $*"; }
 warn()  { echo "WARNING: $*" >&2; }
 fail()  { echo "ERROR: $*" >&2; }
+
+detect_platform() {
+    case "$(uname -s)" in
+        Darwin) PLATFORM="macos" ;;
+        Linux)
+            if [ -f /etc/os-release ]; then
+                . /etc/os-release
+                case "$ID" in
+                    debian|ubuntu|linuxmint|pop|elementary|zorin|kali|raspbian)
+                        PLATFORM="debian" ;;
+                esac
+                if [ -z "${PLATFORM:-}" ]; then
+                    case "${ID_LIKE:-}" in
+                        *debian*) PLATFORM="debian" ;;
+                    esac
+                fi
+            fi
+            ;;
+    esac
+    [ -n "${PLATFORM:-}" ] || { fail "Unsupported OS"; exit 1; }
+}
 
 record_result() {
     local name="$1" rc="$2"
@@ -41,6 +71,10 @@ should_install() {
     return 1
 }
 
+is_installed() {
+    command -v "$1" &>/dev/null
+}
+
 resolve_placeholders() {
     local s="$1"
     s="${s//\{arch_deb\}/$ARCH_DEB}"
@@ -56,53 +90,12 @@ github_latest_version() {
 # Strip leading v from version tags (v0.10.2 -> 0.10.2)
 strip_v() { echo "${1#v}"; }
 
-# --- macOS (Homebrew) ---
+# --- Install methods ---
 
 install_brew() {
     local pkg="$1"
     log "brew: $pkg"
     brew upgrade "$pkg" 2>/dev/null || brew install "$pkg"
-}
-
-run_macos() {
-    local conf="$REPO_DIR/install/packages_macos.conf"
-    [ -f "$conf" ] || { fail "Config not found: $conf"; exit 1; }
-
-    if ! command -v brew &>/dev/null; then
-        fail "Homebrew not found. Install it first: https://brew.sh"
-        exit 1
-    fi
-
-    while IFS= read -r line <&3 || [ -n "$line" ]; do
-        line="$(echo "$line" | sed 's/#.*//' | xargs)"
-        [ -z "$line" ] && continue
-
-        if [[ "$line" == tap:* ]]; then
-            local tap="${line#tap: }"
-            tap="$(echo "$tap" | xargs)"
-            log "brew tap: $tap"
-            brew tap "$tap" 2>/dev/null || true
-            continue
-        fi
-
-        should_install "$line" || continue
-        install_brew "$line"
-        record_result "$line" $?
-    done 3< "$conf"
-}
-
-# --- Ubuntu Linux ---
-
-ensure_prerequisites() {
-    local missing=()
-    for cmd in curl jq gpg; do
-        command -v "$cmd" &>/dev/null || missing+=("$cmd")
-    done
-    if [ "${#missing[@]}" -gt 0 ]; then
-        log "Installing prerequisites: ${missing[*]}"
-        sudo apt-get update -qq
-        sudo apt-get install -y "${missing[@]}"
-    fi
 }
 
 install_apt() {
@@ -286,52 +279,147 @@ install_git_clone() {
     fi
 }
 
-run_ubuntu() {
-    local conf="$REPO_DIR/install/packages_ubuntu.conf"
+# --- Ensure jq is available (needed to parse JSON config) ---
+
+ensure_jq() {
+    if command -v jq &>/dev/null; then
+        return
+    fi
+    case "$PLATFORM" in
+        macos)
+            log "Installing jq (required for config parsing)"
+            brew install jq
+            ;;
+        debian)
+            log "Installing jq (required for config parsing)"
+            sudo apt-get update -qq
+            sudo apt-get install -y jq
+            ;;
+    esac
+}
+
+ensure_prerequisites() {
+    local missing=()
+    for cmd in curl jq gpg; do
+        command -v "$cmd" &>/dev/null || missing+=("$cmd")
+    done
+    if [ "${#missing[@]}" -gt 0 ]; then
+        log "Installing prerequisites: ${missing[*]}"
+        sudo apt-get update -qq
+        sudo apt-get install -y "${missing[@]}"
+    fi
+}
+
+# --- Main runner ---
+
+run() {
+    local conf="$REPO_DIR/packages.json"
     [ -f "$conf" ] || { fail "Config not found: $conf"; exit 1; }
 
-    ensure_prerequisites
+    # Platform-specific setup
+    if [ "$PLATFORM" = "macos" ]; then
+        if ! command -v brew &>/dev/null; then
+            fail "Homebrew not found. Install it first: https://brew.sh"
+            exit 1
+        fi
 
-    while IFS= read -r line <&3 || [ -n "$line" ]; do
-        line="$(echo "$line" | sed 's/#.*//' | xargs)"
-        [ -z "$line" ] && continue
+        # Process taps
+        local taps
+        taps="$(jq -r '.taps[]?' "$conf")"
+        while IFS= read -r tap; do
+            [ -z "$tap" ] && continue
+            log "brew tap: $tap"
+            brew tap "$tap" 2>/dev/null || true
+        done <<< "$taps"
+    fi
 
-        IFS='|' read -ra fields <<< "$line"
-        # Trim whitespace from each field
-        for i in "${!fields[@]}"; do
-            fields[$i]="$(echo "${fields[$i]}" | xargs)"
-        done
+    if [ "$PLATFORM" = "debian" ]; then
+        ensure_prerequisites
+    fi
 
-        local name="${fields[0]}"
-        local method="${fields[1]}"
+    # Iterate packages
+    local tools
+    tools="$(jq -r '.packages | keys[]' "$conf")"
 
+    while IFS= read -r name; do
+        [ -z "$name" ] && continue
         should_install "$name" || continue
+
+        # Check if platform config exists
+        local has_platform
+        has_platform="$(jq -r --arg p "$PLATFORM" --arg n "$name" '.packages[$n] | has($p)' "$conf")"
+        if [ "$has_platform" != "true" ]; then
+            continue
+        fi
+
+        # Get bin name for is_installed check
+        local bin_name
+        bin_name="$(jq -r --arg n "$name" '.packages[$n].bin // $n' "$conf")"
+
+        # Skip if already installed (unless --force)
+        if [ "$FORCE" = false ] && is_installed "$bin_name"; then
+            log "skip: $name (already installed)"
+            SKIPPED+=("$name")
+            continue
+        fi
+
+        local method
+        method="$(jq -r --arg p "$PLATFORM" --arg n "$name" '.packages[$n][$p].method' "$conf")"
 
         local rc=0
         case "$method" in
+            brew)
+                install_brew "$name" || rc=$?
+                ;;
             apt)
                 install_apt "$name" || rc=$?
                 ;;
             apt_repo)
-                install_apt_repo "${fields[2]}" "${fields[3]}" "${fields[4]}" "${fields[5]}" || rc=$?
+                local gpg_url keyring_name repo_line pkg
+                gpg_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].gpg_url' "$conf")"
+                keyring_name="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].keyring_name' "$conf")"
+                repo_line="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo_line' "$conf")"
+                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")"
+                install_apt_repo "$gpg_url" "$keyring_name" "$repo_line" "$pkg" || rc=$?
                 ;;
             github_deb)
-                install_github_deb "${fields[2]}" "${fields[3]}" || rc=$?
+                local repo asset
+                repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")"
+                asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")"
+                install_github_deb "$repo" "$asset" || rc=$?
                 ;;
             github_binary)
-                install_github_binary "${fields[2]}" "${fields[3]}" "${fields[4]}" || rc=$?
+                local repo asset binary
+                repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")"
+                asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")"
+                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
+                install_github_binary "$repo" "$asset" "$binary" || rc=$?
                 ;;
             github_tarball)
-                install_github_tarball "${fields[2]}" "${fields[3]}" "${fields[4]}" "${fields[5]}" || rc=$?
+                local repo asset binary install_dir
+                repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")"
+                asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")"
+                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
+                install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")"
+                install_github_tarball "$repo" "$asset" "$binary" "$install_dir" || rc=$?
                 ;;
             binary_url)
-                install_binary_url "${fields[2]}" "${fields[3]}" || rc=$?
+                local url binary
+                url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
+                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
+                install_binary_url "$url" "$binary" || rc=$?
                 ;;
             script)
-                install_script "${fields[2]}" "$name" || rc=$?
+                local url
+                url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
+                install_script "$url" "$name" || rc=$?
                 ;;
             git_clone)
-                install_git_clone "${fields[2]}" "${fields[3]}" "${fields[4]}" "$name" || rc=$?
+                local repo_url target_dir install_cmd
+                repo_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo_url' "$conf")"
+                target_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].target_dir' "$conf")"
+                install_cmd="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_cmd // empty' "$conf")"
+                install_git_clone "$repo_url" "$target_dir" "$install_cmd" "$name" || rc=$?
                 ;;
             *)
                 warn "Unknown method '$method' for $name"
@@ -340,26 +428,29 @@ run_ubuntu() {
         esac
 
         record_result "$name" "$rc"
-    done 3< "$conf"
+    done <<< "$tools"
 }
 
 # --- Main ---
 
-log "OS=$OS ARCH=$ARCH (deb=$ARCH_DEB, uname=$ARCH_UNAME)"
+detect_platform
+ensure_jq
+
+log "Platform=$PLATFORM ARCH=$ARCH (deb=$ARCH_DEB, uname=$ARCH_UNAME)"
 
 if [ "${#FILTER_TOOLS[@]}" -gt 0 ]; then
     log "Installing: ${FILTER_TOOLS[*]}"
 fi
+if [ "$FORCE" = true ]; then
+    log "Force mode: reinstalling all"
+fi
 
-case "$OS" in
-    Darwin) run_macos ;;
-    Linux)  run_ubuntu ;;
-    *)      fail "Unsupported OS: $OS"; exit 1 ;;
-esac
+run
 
 echo ""
 echo "========== Summary =========="
 echo "Succeeded (${#SUCCEEDED[@]}): ${SUCCEEDED[*]:-none}"
+echo "Skipped   (${#SKIPPED[@]}): ${SKIPPED[*]:-none}"
 if [ "${#FAILED[@]}" -gt 0 ]; then
     echo "Failed    (${#FAILED[@]}): ${FAILED[*]}"
     exit 1
