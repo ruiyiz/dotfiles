@@ -221,27 +221,11 @@ fi
 #     export KEYCHAIN_UNLOCKED=true
 # fi
 
-# yazi
-function y() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-    yazi "$@" --cwd-file="$tmp"
-    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
-}
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 # pnpm (macOS uses ~/Library/pnpm, Linux uses ~/.local/share/pnpm)
 if [[ "$IS_MACOS" == "true" ]]; then
@@ -256,3 +240,5 @@ esac
 
 # Source local overrides (machine-specific config not tracked in git)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+source /Users/ruiyiz/.config/broot/launcher/bash/br
