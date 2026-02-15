@@ -47,7 +47,7 @@ zstyle ':omz:update' frequency 13
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -70,7 +70,7 @@ zstyle ':omz:update' frequency 13
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git fzf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -170,11 +170,10 @@ detect_os
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 alias vi="nvim"
-
 alias l="eza -l --group-directories-first"
 alias ls="eza -x --group-directories-first"
-
 alias suk="security unlock-keychain"
+alias ddr="cd ~/Developer/Repos"
 
 # add binaries to PATH if they aren't added yet
 # affix colons on either side of $PATH to simplify matching
@@ -215,19 +214,9 @@ if [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# Unlock macOS keychain when connected via SSH
-# SSH sessions don't have access to unlocked keychain, causing apps to fail accessing stored credentials
-# Ref: https://github.com/anthropics/claude-code/issues/1222#issuecomment-3164503563
-# if [[ "$IS_MACOS" == "true" ]] && [ -n "$SSH_CONNECTION" ] && [ -z "$KEYCHAIN_UNLOCKED" ]; then
-#     security unlock-keychain ~/Library/Keychains/login.keychain-db
-#     export KEYCHAIN_UNLOCKED=true
-# fi
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
 
 # pnpm (macOS uses ~/Library/pnpm, Linux uses ~/.local/share/pnpm)
 if [[ "$IS_MACOS" == "true" ]]; then

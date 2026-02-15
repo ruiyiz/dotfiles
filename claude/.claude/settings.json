@@ -100,7 +100,8 @@
     "commit-commands@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
-    "document-skills@anthropic-agent-skills": true
+    "document-skills@anthropic-agent-skills": true,
+    "superpowers@claude-plugins-official": true
   },
   "skipDangerousModePermissionPrompt": true
 }
