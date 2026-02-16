@@ -12,6 +12,7 @@
       "Bash(python3:*)",
       "Bash(Rscript:*)",
       "WebSearch",
+      "WebFetch",
       "Bash(echo:*)",
       "Bash(cmd.exe /c echo %TEMP%)",
       "SlashCommand(/label-quarto-cells:*)"
@@ -29,8 +30,7 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(npm publish:*)",
-      "Bash(brew install:*)",
-      "WebFetch"
+      "Bash(brew install:*)"
     ],
     "defaultMode": "bypassPermissions"
   },
