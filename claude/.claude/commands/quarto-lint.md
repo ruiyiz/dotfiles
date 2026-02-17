@@ -1,5 +1,5 @@
 ---
-description: Add interactive prompts to Quarto notebook for manual workflow execution
+description: Add interactive prompts and cell labels to Quarto notebook for manual workflow execution
 argument-hint: <source.qmd>
 allowed-tools:
   - Read
@@ -8,7 +8,7 @@ allowed-tools:
   - Grep
 ---
 
-Add interactive prompts to a Quarto notebook (.qmd) for manual workflow execution, modifying the file in place.
+Add interactive prompts and descriptive cell labels to a Quarto notebook (.qmd) for manual workflow execution, modifying the file in place.
 
 ## Target File
 
@@ -27,6 +27,26 @@ utils$wait_for_user("Message to display")
 utils$prompt_execute("Description", function() { ... })
 utils$prompt_select("Description:", c(label1 = "val1", label2 = "val2"))
 ```
+
+## Cell Labeling Rules
+
+Every code cell must have a `#| label:` as its first chunk option.
+
+1. **Naming convention**: all lowercase, dash-delimited, descriptive
+   - Examples: `setup`, `load-data`, `plot-results`, `set-params`, `import-upstream`
+
+2. **Common prefixes**:
+   - `setup` - library loading, initial configuration
+   - `load-*` / `read-*` - data loading
+   - `set-*` - parameter/config assignment
+   - `clean-*` / `transform-*` - data manipulation
+   - `plot-*` - visualization
+   - `save-*` / `export-*` - output operations
+   - `check-*` - validation/diagnostic prints
+
+3. **If a label exists**: verify it accurately describes the code; revise if misleading or non-conforming (e.g., `myPlot123` -> `plot-scatter`, `dataPrep` -> `clean-data`)
+
+4. **Placement**: `#| label:` goes as the first option line, before other chunk options
 
 ## Chunk Conversion Rules
 
@@ -75,6 +95,7 @@ pins$write(result, "lib", "name")
 
 After:
 ```r
+#| label: run-operation
 utils$prompt_execute("Run expensive operation", function() {
   result <<- expensive_operation()
   pins$write(result, "lib", "name")
@@ -91,6 +112,7 @@ output_mode = "m"
 
 After:
 ```r
+#| label: set-output-mode
 output_mode = utils$prompt_select(
   "Select output mode:",
   c(m = "m", q = "q", ytd = "ytd", `1y` = "1y")
@@ -109,6 +131,7 @@ if (save_excel) {
 
 After:
 ```r
+#| label: save-excel
 utils$prompt_execute("Save Excel output", function() {
   write_output(result)
 })
@@ -130,6 +153,7 @@ utils$open(data_sheet)
 
 After:
 ```r
+#| label: edit-data-sheet
 utils$open(data_sheet)
 utils$wait_for_user("Update values, save and close the file.")
 ```
@@ -195,7 +219,6 @@ if (nrow(missing) > 0) {
 ## What NOT to Change
 
 - Keep all markdown content unchanged
-- Keep chunk labels unchanged
 - Keep other chunk options (e.g., `#| include: false`) unchanged
 - Don't add prompts to chunks that should always run (setup, data loading without side effects)
 

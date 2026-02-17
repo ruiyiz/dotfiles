@@ -14,8 +14,7 @@
       "WebSearch",
       "WebFetch",
       "Bash(echo:*)",
-      "Bash(cmd.exe /c echo %TEMP%)",
-      "SlashCommand(/label-quarto-cells:*)"
+      "Bash(cmd.exe /c echo %TEMP%)"
     ],
     "deny": [
       "Read(./.env)",
