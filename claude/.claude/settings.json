@@ -14,7 +14,8 @@
       "WebSearch",
       "WebFetch",
       "Bash(echo:*)",
-      "Bash(cmd.exe /c echo %TEMP%)"
+      "Bash(cmd.exe /c echo %TEMP%)",
+      "Bash(git commit:*)"
     ],
     "deny": [
       "Read(./.env)",
