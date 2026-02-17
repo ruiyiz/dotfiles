@@ -234,4 +234,9 @@ esac
 
 [ -f "$HOME/.config/broot/launcher/bash/br" ] && source "$HOME/.config/broot/launcher/bash/br"
 
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+# bun (macOS: Homebrew handles PATH/completions, Linux: official install script)
+if [[ "$IS_MACOS" != "true" ]]; then
+    export BUN_INSTALL="$HOME/.bun"
+    export PATH="$BUN_INSTALL/bin:$PATH"
+    [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+fi
