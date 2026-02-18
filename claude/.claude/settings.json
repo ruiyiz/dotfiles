@@ -8,7 +8,6 @@
       "Bash(git add:*)",
       "Bash(jq:*)",
       "Bash(quarto render:*)",
-      "Bash(sed:*)",
       "Bash(python3:*)",
       "Bash(Rscript:*)",
       "WebSearch",
@@ -27,7 +26,6 @@
       "Bash(sudo:*)"
     ],
     "ask": [
-      "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(npm publish:*)",
       "Bash(brew install:*)"
