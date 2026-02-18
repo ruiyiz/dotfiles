@@ -50,5 +50,4 @@ if [ -f "bin/manage_vscode_config.py" ] && [ -d "vscode" ]; then
     echo "Managing VS Code configurations..."
     python3 bin/manage_vscode_config.py "$1"
 fi
-
 echo "Done!"
