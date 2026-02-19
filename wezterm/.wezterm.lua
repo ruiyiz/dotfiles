@@ -43,6 +43,11 @@ config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
     action = wezterm.action.ToggleFullScreen,
   },
   {
+    key = 'F12',
+    mods = 'NONE',
+    action = wezterm.action.Hide,
+  },
+  {
 		key="Enter",
 		mods="SHIFT",
 		action=wezterm.action{SendString="\x1b\r"}
