@@ -260,6 +260,12 @@ install_script() {
     curl -fsSL "$script_url" | bash
 }
 
+install_pipx() {
+    local pkg="$1"
+    log "pipx: $pkg"
+    pipx install "$pkg" || pipx upgrade "$pkg"
+}
+
 install_git_clone() {
     local repo_url="$1" target_dir="$2" install_cmd="$3" name="$4"
 
@@ -413,6 +419,11 @@ run() {
                 local url
                 url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
                 install_script "$url" "$name" || rc=$?
+                ;;
+            pipx)
+                local pkg
+                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")"
+                install_pipx "$pkg" || rc=$?
                 ;;
             git_clone)
                 local repo_url target_dir install_cmd

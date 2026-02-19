@@ -106,6 +106,10 @@
     "pnpm": {
       "macos": { "method": "brew" }
     },
+    "radian": {
+      "macos": { "method": "pipx" },
+      "debian": { "method": "pipx" }
+    },
     "ripgrep": {
       "bin": "rg",
       "macos": { "method": "brew" },
