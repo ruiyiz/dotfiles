@@ -53,12 +53,11 @@ keymap({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = t
 keymap("n", "<leader>h", "<cmd>split<cr>", { desc = "Split horizontal" })    -- <space>h = horizontal split
 keymap("n", "<leader>v", "<cmd>vsplit<cr>", { desc = "Split vertical" })     -- <space>v = vertical split
 
--- Navigate between windows using Ctrl + hjkl (matches your VS Code config)
--- This is the standard Vim way to move between splits
-keymap("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to left window" })   -- Ctrl+h = left
-keymap("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to right window" })  -- Ctrl+l = right
-keymap("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to lower window" })  -- Ctrl+j = down
-keymap("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to upper window" })  -- Ctrl+k = up
+-- Navigate between windows using Alt+Arrow (matches tmux and VS Code)
+keymap("n", "<M-Left>", "<C-w><C-h>", { desc = "Move focus to left window" })
+keymap("n", "<M-Right>", "<C-w><C-l>", { desc = "Move focus to right window" })
+keymap("n", "<M-Down>", "<C-w><C-j>", { desc = "Move focus to lower window" })
+keymap("n", "<M-Up>", "<C-w><C-k>", { desc = "Move focus to upper window" })
 
 -- ╭─────────────────────────────────────────────────────────────────────────╮
 -- │                          BUFFER MANAGEMENT                              │

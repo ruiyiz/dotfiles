@@ -97,19 +97,19 @@
   // PANE NAVIGATION
   // ================================
   {
-    "key": "ctrl-h",
+    "key": "alt-left",
     "command": "workbench.action.navigateLeft"
   },
   {
-    "key": "ctrl-l",
+    "key": "alt-right",
     "command": "workbench.action.navigateRight"
   },
   {
-    "key": "ctrl-k",
+    "key": "alt-up",
     "command": "workbench.action.navigateUp"
   },
   {
-    "key": "ctrl-j",
+    "key": "alt-down",
     "command": "workbench.action.navigateDown"
   },
   {
