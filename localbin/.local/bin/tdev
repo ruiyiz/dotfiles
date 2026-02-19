@@ -13,14 +13,23 @@ set -e
 
 dir="${1:-.}"
 dir="$(cd "$dir" && pwd)"
-session_name="$(basename "$dir")"
+window_name="$(basename "$dir")"
 
-# Sanitize session name (tmux doesn't allow dots in names)
-session_name="${session_name//./-}"
+# Sanitize window name (tmux doesn't allow dots in names)
+window_name="${window_name//./-}"
+
+# Word lists for random session names
+adjectives=(bold calm cool dark deep fast free gold keen live mild pale pure rare slim soft warm wise wild zany)
+nouns=(arch bear bolt cave claw dawn dusk fern flux gale hawk isle jade knot lark mesa moth node opal pine reef sage tide vale wolf yarn)
+
+rand_word() {
+    local -n arr=$1
+    echo "${arr[RANDOM % ${#arr[@]}]}"
+}
 
 if [ -n "$TMUX" ]; then
     # Inside tmux: create a new window in the current session
-    win=$(tmux new-window -P -n "$session_name" -c "$dir" -F "#{window_id}")
+    win=$(tmux new-window -P -n "$window_name" -c "$dir" -F "#{window_id}")
 
     # Split left/right (60/40)
     tmux split-window -h -t "$win" -c "$dir" -l "40%"
@@ -39,13 +48,18 @@ if [ -n "$TMUX" ]; then
     # Focus the shell pane
     tmux select-pane -t "$win.2"
 else
-    # Outside tmux: create a new session
-    if tmux has-session -t "=$session_name" 2>/dev/null; then
-        tmux attach-session -t "=$session_name"
-        exit 0
-    fi
+    # Outside tmux: create a new session with a random name
+    session_name="$(rand_word adjectives)-$(rand_word nouns)"
 
-    tmux new-session -d -s "$session_name" -c "$dir" -x "$(tput cols)" -y "$(tput lines)"
+    # Reattach to an existing session if one matches the directory name.
+    # Disabled: session names are now random, so name-based matching no
+    # longer applies. Re-enable if sessions are keyed by directory again.
+    # if tmux has-session -t "=$session_name" 2>/dev/null; then
+    #     tmux attach-session -t "=$session_name"
+    #     exit 0
+    # fi
+
+    tmux new-session -d -s "$session_name" -n "$window_name" -c "$dir" -x "$(tput cols)" -y "$(tput lines)"
 
     # Split left/right (60/40)
     tmux split-window -h -t "$session_name" -c "$dir" -l "40%"
