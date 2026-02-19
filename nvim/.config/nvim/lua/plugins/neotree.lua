@@ -11,13 +11,14 @@ return {
   },
   cmd = "Neotree",
   keys = {
-    { "<leader>fe", ":Neotree toggle<CR>", desc = "NeoTree" },
+    { "<leader>fe", ":Neotree toggle reveal<CR>", desc = "NeoTree" },
   },
   opts = {
     window = {
-      position = "float", -- Open as floating window instead of split
+      position = "float",
     },
     filesystem = {
+      follow_current_file = { enabled = true },
       filtered_items = {
         visible = true, -- Show hidden files and directories
         hide_dotfiles = false, -- Don't hide dotfiles
