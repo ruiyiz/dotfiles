@@ -68,6 +68,10 @@
         "asset": "glow_{ver}_{arch_deb}.deb"
       }
     },
+    "harlequin": {
+      "macos": { "method": "uv_tool" },
+      "debian": { "method": "uv_tool" }
+    },
     "htop": {
       "macos": { "method": "brew" },
       "debian": { "method": "apt" }
