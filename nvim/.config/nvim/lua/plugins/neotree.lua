@@ -10,12 +10,23 @@ return {
     "MunifTanjim/nui.nvim",
   },
   cmd = "Neotree",
+  event = "VimEnter",
+  init = function()
+    vim.api.nvim_create_autocmd("VimEnter", {
+      callback = function()
+        -- Don't open if launched with a file argument (let the file take focus)
+        if vim.fn.argc() == 0 then
+          vim.cmd("Neotree focus")
+        end
+      end,
+    })
+  end,
   keys = {
-    { "<leader>fe", ":Neotree toggle reveal<CR>", desc = "NeoTree" },
+    { "<leader>fe", ":Neotree focus reveal<CR>", desc = "NeoTree" },
   },
   opts = {
     window = {
-      position = "float",
+      position = "left",
     },
     filesystem = {
       follow_current_file = { enabled = true },

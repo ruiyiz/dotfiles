@@ -75,6 +75,18 @@ keymap("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Delete buffer" })
 -- Prevent accidental quit when habitually typing :q
 -- Smart behavior: close buffer if multiple buffers exist, otherwise quit Neovim
 -- This mimics modern editors with tabs - :q closes the "tab", not the entire editor
+local function has_neotree_sidebar()
+  for _, w in ipairs(vim.api.nvim_list_wins()) do
+    if w ~= vim.api.nvim_get_current_win() then
+      local ft = vim.bo[vim.api.nvim_win_get_buf(w)].filetype
+      if ft == "neo-tree" then
+        return true
+      end
+    end
+  end
+  return false
+end
+
 local function smart_quit()
   -- Get list of buffers that are listed (visible in buffer list)
   local buffers = vim.fn.getbufinfo({ buflisted = 1 })
@@ -88,11 +100,16 @@ local function smart_quit()
     end
   end
 
-  -- If we have more than one real buffer, just close the current buffer
   if real_buffers > 1 then
+    -- Multiple real buffers: just close this one
     vim.cmd("bdelete")
+  elseif real_buffers == 1 and has_neotree_sidebar() then
+    -- Last real buffer with neo-tree open: close it (neovim auto-creates an empty buffer)
+    vim.cmd("bdelete")
+  elseif real_buffers == 0 and has_neotree_sidebar() then
+    -- Empty buffer with neo-tree: quit everything
+    vim.cmd("qall")
   else
-    -- Otherwise, quit Neovim
     vim.cmd("quit")
   end
 end
@@ -112,6 +129,7 @@ vim.cmd([[
 ]])
 
 -- Note: :q! and :qa still work as normal for force quit and quit all
+
 
 -- ╭─────────────────────────────────────────────────────────────────────────╮
 -- │                            VISUAL MODE                                  │
