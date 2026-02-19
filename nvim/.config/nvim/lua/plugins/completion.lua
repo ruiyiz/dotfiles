@@ -109,6 +109,7 @@ return {
     dependencies = {
       "hrsh7th/cmp-buffer",           -- Buffer words
       "hrsh7th/cmp-path",             -- File paths
+      "hrsh7th/cmp-cmdline",          -- Cmdline completions for : and /
       "saadparwaiz1/cmp_luasnip",     -- Snippet completions
       "L3MON4D3/LuaSnip",             -- Snippet engine
       "zbirenbaum/copilot-cmp",       -- Copilot suggestions
@@ -225,6 +226,27 @@ return {
         -- Experimental features
         experimental = {
           ghost_text = false, -- Disable ghost text (we use the menu)
+        },
+      })
+
+      -- ─────────────────────────────────────────────────────────────────
+      --                      CMDLINE COMPLETION
+      -- ─────────────────────────────────────────────────────────────────
+      -- Use nvim-cmp popup for : command completion
+      cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = "path" },
+        }, {
+          { name = "cmdline" },
+        }),
+      })
+
+      -- Use nvim-cmp popup for / and ? search completion
+      cmp.setup.cmdline({ "/", "?" }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = "buffer" },
         },
       })
     end,

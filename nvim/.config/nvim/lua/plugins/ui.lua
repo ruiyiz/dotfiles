@@ -46,6 +46,7 @@ return {
         gitsigns = true,                -- Style git signs in gutter
         bufferline = true,              -- Style bufferline tabs
         cmp = true,                     -- Style completion popup
+        noice = true,                   -- Style noice cmdline popup
         -- Add more integrations as you install plugins:
         -- lsp_trouble = true,          -- For diagnostics
       },
