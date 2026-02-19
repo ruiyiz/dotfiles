@@ -13,13 +13,13 @@ allowed-tools: Bash, Read
 
 ### `todo today`
 
-Shows today's agenda: overdue items, items due today, upcoming 7 days, and high-priority items.
+Shows today's agenda: overdue items, items due today, upcoming (rest of week), and prioritized items.
 
 ### `todo show [filter]`
 
 List todos with optional filter. Without a filter, shows active todos from the default list.
 
-**Filters:** `today`, `tomorrow`, `week`, `overdue`, `upcoming`, `done`/`completed`, `all`, `high`, `medium`, `low`, or any natural language date ("next friday", `YYYY-MM-DD`).
+**Filters:** `today`, `tomorrow`, `week`, `overdue`, `upcoming`, `done`/`completed`, `all`, `prioritized`, or any natural language date ("next friday", `YYYY-MM-DD`).
 
 **Options:**
 - `-l, --list <name>` -- filter by list (name or numeric ID)
@@ -32,12 +32,12 @@ Results are indexed; subsequent commands can reference todos by index (e.g., `to
 - `--title <title>` -- alternative to positional arg
 - `--list <name>` -- target list (default: "Todos")
 - `--due <date>` -- natural language date ("tomorrow", "next friday", "Jan 15")
-- `--priority <level>` -- `none` (default), `low`, `medium`, `high`
+- `--priority <level>` -- `normal` (default), `prioritized`
 - `--notes <notes>`
 
 ```bash
-todo add "Review PR" --priority high --due tomorrow
-todo add "Quarterly report" --list Work --due "next friday" --priority medium
+todo add "Review PR" --priority prioritized --due tomorrow
+todo add "Quarterly report" --list Work --due "next friday"
 ```
 
 ### `todo edit <id>`
@@ -47,7 +47,7 @@ todo add "Quarterly report" --list Work --due "next friday" --priority medium
 - `--list <name>` -- move to different list
 - `--due <date>` -- natural language date
 - `--clear-due` -- remove due date
-- `--priority <level>` -- `none`, `low`, `medium`, `high`
+- `--priority <level>` -- `normal`, `prioritized`
 - `--notes <notes>`
 - `--complete` / `--incomplete`
 
