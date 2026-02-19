@@ -28,6 +28,10 @@ if [ -n "$TMUX" ]; then
     # Split the left pane top/bottom (60/40)
     tmux split-window -v -t "$win.1" -c "$dir" -l "40%"
 
+    # Capture shell pane ID and pass it to the nvim environment
+    repl_pane=$(tmux display-message -p -t "$win.2" "#{pane_id}")
+    tmux send-keys -t "$win.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
+
     # Launch programs
     tmux send-keys -t "$win.1" 'nvim' Enter
     tmux send-keys -t "$win.3" 'claude' Enter
@@ -48,6 +52,10 @@ else
 
     # Split the left pane top/bottom (60/40)
     tmux split-window -v -t "$session_name:1.1" -c "$dir" -l "40%"
+
+    # Capture shell pane ID and pass it to the nvim environment
+    repl_pane=$(tmux display-message -p -t "$session_name:1.2" "#{pane_id}")
+    tmux send-keys -t "$session_name:1.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
 
     # Launch programs
     tmux send-keys -t "$session_name:1.1" 'nvim' Enter

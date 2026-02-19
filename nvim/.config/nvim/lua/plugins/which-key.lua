@@ -46,6 +46,9 @@ return {
       -- Git operations (gitsigns integration)
       { "<leader>g", group = "[G]it" },       -- <space>g shows git operations
 
+      -- Quarto/Markdown cell runner (buffer-local, localleader = \)
+      { "<localleader>r", group = "[R]un cell" },
+
       -- Example of how to add more groups as you expand your config:
       -- { "<leader>l", group = "[L]SP" },    -- For future LSP keybindings
       -- { "<leader>d", group = "[D]ebug" },  -- For future debugging keybindings

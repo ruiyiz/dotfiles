@@ -11,6 +11,13 @@
 --]]
 
 return {
+  -- mini.icons: icon provider used by which-key (and others) as a devicons alternative
+  {
+    "echasnovski/mini.icons",
+    lazy = true,
+    opts = {},
+  },
+
   -- ╭─────────────────────────────────────────────────────────────────────────╮
   -- │                            COLORSCHEME                                  │
   -- ╰─────────────────────────────────────────────────────────────────────────╯
