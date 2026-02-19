@@ -46,8 +46,19 @@ config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
 		key="Enter",
 		mods="SHIFT",
 		action=wezterm.action{SendString="\x1b\r"}
-	}
+	},
 }
+
+-- On Windows, pass Alt+Arrow through to tmux for pane navigation
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+	for _, arrow in ipairs({"LeftArrow", "RightArrow", "UpArrow", "DownArrow"}) do
+		table.insert(config.keys, {
+			key = arrow,
+			mods = "ALT",
+			action = wezterm.action.SendKey({ key = arrow, mods = "ALT" }),
+		})
+	end
+end
 
 -- Check if we're running on Windows and set WSL as default domain if so
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
