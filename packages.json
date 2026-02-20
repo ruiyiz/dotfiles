@@ -1,5 +1,5 @@
 {
-  "taps": ["oven-sh/bun"],
+  "taps": ["marcus/tap", "oven-sh/bun"],
   "packages": {
     "broot": {
       "macos": { "method": "brew" },
@@ -58,6 +58,17 @@
         "keyring_name": "gh",
         "repo_line": "deb [arch={arch_deb}] https://cli.github.com/packages stable main",
         "pkg": "gh"
+      }
+    },
+    "go": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "url_tarball",
+        "version_url": "https://go.dev/dl/?mode=json",
+        "version_jq": ".[0].version",
+        "url": "https://go.dev/dl/{ver}.linux-{arch_deb}.tar.gz",
+        "install_dir": "/usr/local/go",
+        "binary": "go"
       }
     },
     "glow": {
@@ -123,9 +134,23 @@
         "asset": "ripgrep_{ver}-1_{arch_deb}.deb"
       }
     },
+    "sidecar": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "script",
+        "url": "https://raw.githubusercontent.com/marcus/sidecar/main/scripts/setup.sh"
+      }
+    },
     "stow": {
       "macos": { "method": "brew" },
       "debian": { "method": "apt" }
+    },
+    "td": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "go_install",
+        "pkg": "github.com/marcus/td@latest"
+      }
     },
     "uv": {
       "debian": {

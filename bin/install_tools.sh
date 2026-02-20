@@ -241,6 +241,53 @@ install_github_tarball() {
     rm -rf "$tmp_dir"
 }
 
+install_url_tarball() {
+    local version_url="$1" version_jq="$2" url_template="$3" binary_name="$4" install_dir="$5" pinned_ver="$6"
+
+    log "url_tarball: $binary_name -> $install_dir"
+
+    local ver
+    if [ -n "$pinned_ver" ]; then
+        ver="$pinned_ver"
+    else
+        ver="$(curl -fsSL "$version_url" | jq -r "$version_jq")"
+    fi
+
+    local url
+    url="$(resolve_placeholders "$url_template")"
+    url="${url//\{ver\}/$ver}"
+
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    local filename="${url##*/}"
+    curl -fsSL -o "$tmp_dir/$filename" "$url"
+
+    case "$filename" in
+        *.tar.gz|*.tgz) tar -xzf "$tmp_dir/$filename" -C "$tmp_dir" ;;
+        *.zip)          unzip -qo "$tmp_dir/$filename" -d "$tmp_dir" ;;
+    esac
+
+    sudo rm -rf "$install_dir"
+    sudo mkdir -p "$install_dir"
+
+    # Move extracted contents (handle single top-level dir)
+    local dirs
+    dirs=("$tmp_dir"/*/)
+    if [ "${#dirs[@]}" -eq 1 ] && [ -d "${dirs[0]}" ]; then
+        sudo cp -r "${dirs[0]}"/* "$install_dir/"
+    else
+        sudo cp -r "$tmp_dir"/* "$install_dir/"
+    fi
+
+    # Symlink binary
+    local bin_path="$install_dir/bin/$binary_name"
+    if [ -f "$bin_path" ]; then
+        sudo ln -sf "$bin_path" "/usr/local/bin/$binary_name"
+    fi
+
+    rm -rf "$tmp_dir"
+}
+
 install_binary_url() {
     local url_template="$1" binary_name="$2"
 
@@ -270,6 +317,17 @@ install_uv_tool() {
     local pkg="$1"
     log "uv tool: $pkg"
     uv tool install "$pkg" || uv tool upgrade "$pkg"
+}
+
+install_go_install() {
+    local pkg="$1" name="$2"
+    log "go install: $name"
+    [ -d /usr/local/go/bin ] && export PATH="/usr/local/go/bin:$PATH"
+    if ! command -v go &>/dev/null; then
+        fail "go not found; install go first"
+        return 1
+    fi
+    go install "$pkg"
 }
 
 install_git_clone() {
@@ -415,6 +473,16 @@ run() {
                 install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")"
                 install_github_tarball "$repo" "$asset" "$binary" "$install_dir" || rc=$?
                 ;;
+            url_tarball)
+                local version_url version_jq url binary install_dir pinned_ver
+                version_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version_url // empty' "$conf")"
+                version_jq="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version_jq // empty' "$conf")"
+                url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
+                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
+                install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")"
+                pinned_ver="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version // empty' "$conf")"
+                install_url_tarball "$version_url" "$version_jq" "$url" "$binary" "$install_dir" "$pinned_ver" || rc=$?
+                ;;
             binary_url)
                 local url binary
                 url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
@@ -435,6 +503,11 @@ run() {
                 local pkg
                 pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")"
                 install_uv_tool "$pkg" || rc=$?
+                ;;
+            go_install)
+                local pkg
+                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")"
+                install_go_install "$pkg" "$name" || rc=$?
                 ;;
             git_clone)
                 local repo_url target_dir install_cmd
