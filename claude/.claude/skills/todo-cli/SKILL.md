@@ -33,11 +33,12 @@ Results are indexed; subsequent commands can reference todos by index (e.g., `to
 - `--list <name>` -- target list (default: "Todos")
 - `--due <date>` -- natural language date ("tomorrow", "next friday", "Jan 15")
 - `--priority <level>` -- `normal` (default), `prioritized`
-- `--notes <notes>`
+- `--notes <notes>` -- supports `\n` for multi-line (e.g., `--notes 'line1\nline2'`)
 
 ```bash
 todo add "Review PR" --priority prioritized --due tomorrow
 todo add "Quarterly report" --list Work --due "next friday"
+todo add "Groceries" --notes 'milk\nbread\neggs'
 ```
 
 ### `todo edit <id>`
@@ -48,7 +49,7 @@ todo add "Quarterly report" --list Work --due "next friday"
 - `--due <date>` -- natural language date
 - `--clear-due` -- remove due date
 - `--priority <level>` -- `normal`, `prioritized`
-- `--notes <notes>`
+- `--notes <notes>` -- supports `\n` for multi-line
 - `--complete` / `--incomplete`
 
 ```bash
@@ -103,9 +104,24 @@ Database path, total/completed/overdue counts, number of lists.
 
 Todos are referenced by: (1) numeric index from last `show`/`today`, (2) full UUID, or (3) unambiguous UUID prefix. Always run `show`/`today` first to populate the index.
 
+**IMPORTANT: Numeric indices are global and ephemeral.** Any `todo show` or `todo today` call reassigns all indices across the entire database. Running `todo show -l "List A"` then `todo show -l "List B"` invalidates the indices from List A. This means:
+- When operating on a single list, use numeric indices freely after a `show` on that list.
+- When operating across multiple lists, use `--json` to extract UUID prefixes and reference tasks by UUID prefix instead of numeric index. Example:
+
+```bash
+todo show -l "My List" --json | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for t in data:
+    print(f\"{t['id'][:8]}  {t['title']}\")
+"
+# Then use UUID prefixes: todo complete abc12345
+```
+
 ## Usage Notes
 
 - Always use `--force` with `delete` to avoid interactive prompts that block execution.
 - Use `--json` when you need to parse output programmatically.
 - Run `todo show` or `todo today` before commands that take `<id>` so numeric indices are populated.
 - Due dates accept natural language via chrono-node: "tomorrow", "next friday", "in 3 days", "Dec 25", etc.
+- When batch-ingesting tasks from a file, add all tasks first (parallelizable), then use `--json` to get UUIDs, then mark completed tasks using UUID prefixes.
