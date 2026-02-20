@@ -22,10 +22,8 @@ window_name="${window_name//./-}"
 adjectives=(bold calm cool dark deep fast free gold keen live mild pale pure rare slim soft warm wise wild zany)
 nouns=(arch bear bolt cave claw dawn dusk fern flux gale hawk isle jade knot lark mesa moth node opal pine reef sage tide vale wolf yarn)
 
-rand_word() {
-    local -n arr=$1
-    echo "${arr[RANDOM % ${#arr[@]}]}"
-}
+rand_adj() { echo "${adjectives[RANDOM % ${#adjectives[@]}]}"; }
+rand_noun() { echo "${nouns[RANDOM % ${#nouns[@]}]}"; }
 
 if [ -n "$TMUX" ]; then
     # Inside tmux: create a new window in the current session
@@ -49,7 +47,7 @@ if [ -n "$TMUX" ]; then
     tmux select-pane -t "$win.2"
 else
     # Outside tmux: create a new session with a random name
-    session_name="$(rand_word adjectives)-$(rand_word nouns)"
+    session_name="$(rand_adj)-$(rand_noun)"
 
     # Reattach to an existing session if one matches the directory name.
     # Disabled: session names are now random, so name-based matching no
