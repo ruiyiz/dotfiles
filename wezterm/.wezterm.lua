@@ -30,6 +30,9 @@ config.initial_rows = 60
 
 config.hide_tab_bar_if_only_one_tab = true
 
+local is_windows = wezterm.target_triple == "x86_64-pc-windows-msvc"
+local hide_action = is_windows and wezterm.action.Hide or wezterm.action.HideApplication
+
 config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
 	-- be potentially recognized and handled by the tab
 	{
@@ -45,7 +48,7 @@ config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
   {
     key = 'F12',
     mods = 'NONE',
-    action = wezterm.action.Hide,
+    action = hide_action,
   },
   {
     key = 'L',
