@@ -61,9 +61,12 @@ return {
 
     -- Configuration function (runs after plugin loads)
     config = function(_, opts)
-      -- Setup catppuccin with our options
+      opts.custom_highlights = function(colors)
+        return {
+          CodeCell = { bg = colors.surface0 },
+        }
+      end
       require("catppuccin").setup(opts)
-      -- Apply the colorscheme
       vim.cmd.colorscheme("catppuccin")
     end,
   },
