@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Launch a tmux AI-assisted dev session with 3-pane layout:
+#   +----------+--------+
+#   | sidecar  |        |
+#   |  (60%)   | claude |
+#   +----------+ (40%)  |
+#   |  shell   |        |
+#   |  (40%)   |        |
+#   +----------+--------+
+#     60%         40%
+
+set -e
+
+dir="${1:-.}"
+dir="$(cd "$dir" && pwd)"
+window_name="$(basename "$dir")"
+
+# Sanitize window name (tmux doesn't allow dots in names)
+window_name="${window_name//./-}"
+
+# Word lists for random session names
+adjectives=(bold calm cool dark deep fast free gold keen live mild pale pure rare slim soft warm wise wild zany)
+nouns=(arch bear bolt cave claw dawn dusk fern flux gale hawk isle jade knot lark mesa moth node opal pine reef sage tide vale wolf yarn)
+
+rand_adj() { echo "${adjectives[RANDOM % ${#adjectives[@]}]}"; }
+rand_noun() { echo "${nouns[RANDOM % ${#nouns[@]}]}"; }
+
+if [ -n "$TMUX" ]; then
+    # Inside tmux: create a new window in the current session
+    win=$(tmux new-window -P -n "$window_name" -c "$dir" -F "#{window_id}")
+
+    # Split left/right (60/40)
+    tmux split-window -h -t "$win" -c "$dir" -l "40%"
+
+    # Split the left pane top/bottom (60/40)
+    tmux split-window -v -t "$win.1" -c "$dir" -l "40%"
+
+    # Keep sidecar pane focused so terminal capability responses from
+    # program startup are routed there (not to the shell pane)
+    tmux select-pane -t "$win.1"
+
+    # Launch programs
+    tmux send-keys -t "$win.1" 'sidecar' Enter
+    tmux send-keys -t "$win.3" 'claude' Enter
+
+    # Wait for startup terminal queries to settle, then focus shell pane
+    sleep 2
+    tmux select-pane -t "$win.2"
+else
+    # Outside tmux: create a new session with a random name
+    session_name="$(rand_adj)-$(rand_noun)"
+
+    tmux new-session -d -s "$session_name" -n "$window_name" -c "$dir" -x "$(tput cols)" -y "$(tput lines)"
+
+    # Split left/right (60/40)
+    tmux split-window -h -t "$session_name" -c "$dir" -l "40%"
+
+    # Split the left pane top/bottom (60/40)
+    tmux split-window -v -t "$session_name:1.1" -c "$dir" -l "40%"
+
+    # Keep sidecar pane focused so terminal capability responses from
+    # program startup are routed there (not to the shell pane)
+    tmux select-pane -t "$session_name:1.1"
+
+    # Launch programs
+    tmux send-keys -t "$session_name:1.1" 'sidecar' Enter
+    tmux send-keys -t "$session_name:1.3" 'claude' Enter
+
+    # Wait for startup terminal queries to settle, then focus shell pane
+    sleep 2
+    tmux select-pane -t "$session_name:1.2"
+
+    tmux attach-session -t "$session_name"
+fi
