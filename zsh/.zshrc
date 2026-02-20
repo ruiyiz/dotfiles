@@ -171,7 +171,8 @@ detect_os
 
 # Free C-l for tmux/neovim pane navigation; use C-S-l to clear
 bindkey -r '^L'
-bindkey '^[[76;6u' clear-screen  # Ctrl-Shift-L (CSI u encoding, 76='L')
+bindkey '^[[76;6u' clear-screen   # C-S-l via tmux extended-keys (76='L')
+bindkey '^[[108;6u' clear-screen  # C-S-l direct from terminal (108='l')
 
 alias vi="nvim"
 alias l="eza -l --group-directories-first"
