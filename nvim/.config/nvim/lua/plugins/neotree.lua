@@ -6,36 +6,25 @@ return {
   version = "*",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+    "nvim-tree/nvim-web-devicons",
     "MunifTanjim/nui.nvim",
   },
   cmd = "Neotree",
-  event = "VimEnter",
-  init = function()
-    vim.api.nvim_create_autocmd("VimEnter", {
-      callback = function()
-        -- Don't open if launched with a file argument (let the file take focus)
-        if vim.fn.argc() == 0 then
-          vim.cmd("Neotree focus")
-        end
-      end,
-    })
-  end,
   keys = {
-    { "<leader>fe", ":Neotree focus reveal<CR>", desc = "NeoTree" },
+    { "<leader>fe", "<cmd>Neotree toggle reveal<cr>", desc = "Toggle NeoTree" },
   },
   opts = {
     window = {
-      position = "left",
+      position = "float",
     },
     filesystem = {
       follow_current_file = { enabled = true },
       filtered_items = {
-        visible = true, -- Show hidden files and directories
-        hide_dotfiles = false, -- Don't hide dotfiles
-        hide_gitignored = false, -- Don't hide gitignored files
+        visible = true,
+        hide_dotfiles = false,
+        hide_gitignored = false,
         hide_by_name = {
-          ".git", -- Still hide .git directory
+          ".git",
         },
       },
       window = {
