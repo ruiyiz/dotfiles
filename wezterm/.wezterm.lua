@@ -48,6 +48,16 @@ config.keys = {-- Turn off the default CMD-m Hide action, allowing CMD-m to
     action = wezterm.action.Hide,
   },
   {
+    key = 'L',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.SendString("\x1b[108;6u"),
+  },
+  {
+    key = 'D',
+    mods = 'CTRL|SHIFT|ALT',
+    action = wezterm.action.ShowDebugOverlay,
+  },
+  {
 		key="Enter",
 		mods="SHIFT",
 		action=wezterm.action{SendString="\x1b\r"}

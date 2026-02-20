@@ -33,6 +33,10 @@
   "vim.highlightedyank.enable": true,
   "vim.smartRelativeLine": true,
   "vim.handleKeys": {
+    "<C-h>": false,
+    "<C-j>": false,
+    "<C-k>": false,
+    "<C-l>": false,
     "<C-pageup>": false,      // Quarto=prev block
     "<C-pagedown>": false,    // Quarto=next block
   },

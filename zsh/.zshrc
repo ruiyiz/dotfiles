@@ -169,6 +169,10 @@ detect_os
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# Free C-l for tmux/neovim pane navigation; use C-S-l to clear
+bindkey -r '^L'
+bindkey '^[[76;6u' clear-screen  # Ctrl-Shift-L (CSI u encoding, 76='L')
+
 alias vi="nvim"
 alias l="eza -l --group-directories-first"
 alias ls="eza -x --group-directories-first"
