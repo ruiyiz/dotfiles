@@ -1,0 +1,18 @@
+default_profile = "default"
+
+[profiles.default]
+keymap_name = ["vscode", "custom"]
+
+# Remap run_query from ctrl+j/ctrl+enter to F8.
+# ctrl+j conflicts with tmux vim-tmux-navigator (select-pane -D),
+# and ctrl+enter is internally translated to ctrl+j by Textual.
+[[keymaps.custom]]
+keys = "f8"
+action = "code_editor.run_query"
+key_display = "▶/F8"
+
+# Move query history (was F8) to Shift+F8
+[[keymaps.custom]]
+keys = "shift+f8"
+action = "show_query_history"
+key_display = "History/Shift+F8"

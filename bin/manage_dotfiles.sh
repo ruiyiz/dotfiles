@@ -4,7 +4,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_DIR"
 
 # List of directories to manage
-DIRS=("nvim" "git" "tmux" "zsh" "wezterm" "zellij" "claude" "localbin" "sidecar")
+DIRS=("nvim" "git" "tmux" "zsh" "wezterm" "zellij" "claude" "localbin" "sidecar" "harlequin")
 
 # Check if parameter is provided
 if [ $# -lt 1 ] || [ $# -gt 2 ]; then
