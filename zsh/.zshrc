@@ -245,3 +245,7 @@ if [[ "$IS_MACOS" != "true" ]]; then
     export PATH="$BUN_INSTALL/bin:$PATH"
     [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 fi
+
+if [[ "$IS_MACOS" != "true" ]]; then
+    export PATH="$HOME/go/bin:$PATH"
+fi
