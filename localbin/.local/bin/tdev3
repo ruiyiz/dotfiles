@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec tdev -l 3col "$@"
