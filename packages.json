@@ -157,15 +157,6 @@
         "method": "script",
         "url": "https://astral.sh/uv/install.sh"
       }
-    },
-    "zellij": {
-      "macos": { "method": "brew" },
-      "debian": {
-        "method": "github_binary",
-        "repo": "zellij-org/zellij",
-        "asset": "zellij-{arch_uname}-unknown-linux-musl.tar.gz",
-        "binary": "zellij"
-      }
     }
   }
 }
