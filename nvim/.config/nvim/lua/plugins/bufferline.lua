@@ -47,15 +47,26 @@ return {
         modified_icon = "●",
 
         -- Maximum length of buffer names before truncating
-        max_name_length = 18,
-        max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
-        truncate_names = true, -- whether or not tab names should be truncated
+        max_name_length = 30,
+        max_prefix_length = 15,
+        truncate_names = false,
+
+        -- Strip extension and middle-truncate long names
+        name_formatter = function(buf)
+          local name = buf.name:match("(.+)%..+$") or buf.name
+          local max_len = 18
+          if #name <= max_len then
+            return name
+          end
+          local side = math.floor((max_len - 1) / 2)
+          return name:sub(1, side) .. "…" .. name:sub(-side)
+        end,
 
         -- ═══════════════════════════════════════════════════════════════════
         --                            BEHAVIOR
         -- ═══════════════════════════════════════════════════════════════════
         -- Enforce regular tabs (don't group by directory)
-        enforce_regular_tabs = true,
+        enforce_regular_tabs = false,
 
         -- Always show bufferline even with single buffer
         always_show_bufferline = true,

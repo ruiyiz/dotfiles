@@ -179,6 +179,7 @@ alias l="eza -l --group-directories-first"
 alias ls="eza -x --group-directories-first"
 alias suk="security unlock-keychain"
 alias ddr="cd ~/Developer/Repos"
+alias r="radian"
 
 # add binaries to PATH if they aren't added yet
 # affix colons on either side of $PATH to simplify matching
