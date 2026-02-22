@@ -95,6 +95,20 @@ The zsh configuration includes:
   - Git autofetch enabled
   - Language-specific formatting for R and Quarto
 
+### Neovim Integration (Agent Sync)
+
+When running inside a `tdev` tmux session, `NVIM_LISTEN_ADDRESS` is set to a Neovim socket. Files edited via Edit/Write tools are automatically opened in the paired Neovim instance (via the `nvim-sync.sh` PostToolUse hook).
+
+When the user asks to open a file in Neovim, you MUST use `--remote-send` to send a command to the already-running Neovim instance. NEVER launch a new `nvim` process. The correct command is:
+
+```bash
+nvim --server "$NVIM_LISTEN_ADDRESS" --remote-send "<C-\\><C-n>:edit <filepath><CR>"
+```
+
+Before running this command, check that `NVIM_LISTEN_ADDRESS` is set and the socket exists. If not, tell the user no Neovim instance is connected and suggest starting a `tdev` session.
+
+The user can toggle auto-follow in Neovim with `<leader>af`. When follow is off, buffers still reload but Neovim won't switch to the edited file.
+
 ### Shell Features
 - SSH key management with keychain (Linux only)
 - Custom PATH modifications for Doom Emacs and local binaries

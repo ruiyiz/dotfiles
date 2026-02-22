@@ -32,6 +32,7 @@
     ],
     "defaultMode": "bypassPermissions"
   },
+  "model": "opusplan",
   "hooks": {
     "Stop": [
       {
