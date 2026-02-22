@@ -12,7 +12,7 @@ follow=$(nvim --server "$NVIM_LISTEN_ADDRESS" --remote-expr "get(g:, 'agent_foll
 
 if [ "$follow" = "1" ]; then
     nvim --server "$NVIM_LISTEN_ADDRESS" --remote-send \
-        "<C-\\><C-n>:checktime<CR>:edit $file_path<CR>" 2>/dev/null
+        "<C-\\><C-n>:checktime<CR>:edit $file_path<CR>:lua vim.defer_fn(function() require('gitsigns').nav_hunk('first') end, 100)<CR>" 2>/dev/null
 else
     nvim --server "$NVIM_LISTEN_ADDRESS" --remote-send \
         "<C-\\><C-n>:checktime<CR>" 2>/dev/null

@@ -240,11 +240,14 @@ esac
 
 [ -f "$HOME/.config/broot/launcher/bash/br" ] && source "$HOME/.config/broot/launcher/bash/br"
 
-# bun (macOS: Homebrew handles PATH/completions, Linux: official install script)
+# bun (macOS: Homebrew handles core binary, Linux: official install script)
+export BUN_INSTALL="$HOME/.bun"
 if [[ "$IS_MACOS" != "true" ]]; then
-    export BUN_INSTALL="$HOME/.bun"
     export PATH="$BUN_INSTALL/bin:$PATH"
     [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+else
+    # Homebrew provides the bun binary, but bun link installs to ~/.bun/bin
+    export PATH="$BUN_INSTALL/bin:$PATH"
 fi
 
 if [[ "$IS_MACOS" != "true" ]]; then
