@@ -46,6 +46,9 @@ return {
       -- Git operations (gitsigns integration)
       { "<leader>g", group = "[G]it" },       -- <space>g shows git operations
 
+      -- Agent integration (follow toggle, etc.)
+      { "<leader>a", group = "[A]gent" },
+
       -- Quarto/Markdown cell runner (buffer-local, localleader = \)
       { "<localleader>r", group = "[R]un cell" },
 

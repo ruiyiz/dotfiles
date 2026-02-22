@@ -91,3 +91,21 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.breakindent = true -- Preserve indentation on wrapped lines
   end,
 })
+
+-- ╭─────────────────────────────────────────────────────────────────────────╮
+-- │                          EXTERNAL CHANGES                              │
+-- │                                                                         │
+-- │ Auto-reload files modified outside Neovim (e.g., by a coding agent    │
+-- │ running in another tmux pane).                                         │
+-- ╰─────────────────────────────────────────────────────────────────────────╯
+vim.opt.autoread = true
+
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+  command = "checktime",
+})
+
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  callback = function()
+    vim.notify("File changed on disk. Reloaded.", vim.log.levels.INFO)
+  end,
+})

@@ -5,14 +5,14 @@
 #
 # Layouts:
 #   default:
-#     +----------+--------+
-#     |  nvim    |        |
-#     |  (60%)   | claude |
-#     +----------+ (40%)  |
-#     |  shell   |        |
-#     |  (40%)   |        |
-#     +----------+--------+
-#       60%         40%
+#     +--------+--------+
+#     |  nvim  |        |
+#     |  (60%) | claude |
+#     +--------+ (50%)  |
+#     |  shell |        |
+#     |  (40%) |        |
+#     +--------+--------+
+#       50%       50%
 #
 #   3col:
 #     +--------+--------+--------+
@@ -55,14 +55,18 @@ rand_noun() { echo "${nouns[RANDOM % ${#nouns[@]}]}"; }
 layout_default() {
     local target="$1" pp="$2"
 
-    tmux split-window -h -t "$target" -c "$dir" -l "40%"
+    tmux split-window -h -t "$target" -c "$dir" -l "50%"
     tmux split-window -v -t "${pp}.1" -c "$dir" -l "40%"
 
     local repl_pane
     repl_pane=$(tmux display-message -p -t "${pp}.2" "#{pane_id}")
     tmux send-keys -t "${pp}.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
 
-    tmux send-keys -t "${pp}.1" 'nvim' Enter
+    local nvim_pane_id nvim_sock
+    nvim_pane_id=$(tmux display-message -p -t "${pp}.1" "#{pane_id}")
+    nvim_sock="/tmp/nvim-tdev-${nvim_pane_id#%}.sock"
+    tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
+    tmux send-keys -t "${pp}.3" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
     tmux send-keys -t "${pp}.3" 'claude' Enter
     tmux select-pane -t "${pp}.2"
 }
@@ -79,7 +83,11 @@ layout_3col() {
     repl_pane=$(tmux display-message -p -t "${pp}.3" "#{pane_id}")
     tmux send-keys -t "${pp}.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
 
-    tmux send-keys -t "${pp}.1" 'nvim' Enter
+    local nvim_pane_id nvim_sock
+    nvim_pane_id=$(tmux display-message -p -t "${pp}.1" "#{pane_id}")
+    nvim_sock="/tmp/nvim-tdev-${nvim_pane_id#%}.sock"
+    tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
+    tmux send-keys -t "${pp}.2" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
     tmux send-keys -t "${pp}.2" 'claude' Enter
     tmux select-pane -t "${pp}.3"
 }

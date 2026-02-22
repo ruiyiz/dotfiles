@@ -89,3 +89,15 @@ keymap("v", ">", ">gv", { desc = "Indent right" })
 -- Normally when you paste over selected text, Vim yanks the replaced text
 -- This mapping pastes from the "black hole register" (_) which discards the replaced text
 keymap("x", "<leader>p", [["_dP]], { desc = "Paste without yanking" })
+
+-- ╭─────────────────────────────────────────────────────────────────────────╮
+-- │                          AGENT INTEGRATION                             │
+-- ╰─────────────────────────────────────────────────────────────────────────╯
+-- Toggle whether Neovim follows files edited by an external coding agent.
+-- When on (default), the agent's PostToolUse hook switches Neovim to the edited file.
+-- When off, only open buffers are silently reloaded.
+vim.g.agent_follow = 1
+keymap("n", "<leader>af", function()
+  vim.g.agent_follow = vim.g.agent_follow == 1 and 0 or 1
+  vim.notify("Agent follow: " .. (vim.g.agent_follow == 1 and "ON" or "OFF"))
+end, { desc = "Toggle agent follow" })

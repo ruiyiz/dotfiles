@@ -88,6 +88,18 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/nvim-sync.sh",
+            "async": true
+          }
+        ]
+      }
     ]
   },
   "statusLine": {

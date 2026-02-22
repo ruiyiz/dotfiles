@@ -15,7 +15,7 @@ return {
   },
   opts = {
     window = {
-      position = "float",
+      position = "current",
     },
     filesystem = {
       follow_current_file = { enabled = true },
