@@ -68,7 +68,7 @@ layout_default() {
     tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
     tmux send-keys -t "${pp}.3" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
     tmux send-keys -t "${pp}.3" 'claude' Enter
-    tmux select-pane -t "${pp}.2"
+    tmux select-pane -t "${pp}.3"
 }
 
 layout_3col() {
@@ -89,7 +89,7 @@ layout_3col() {
     tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
     tmux send-keys -t "${pp}.2" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
     tmux send-keys -t "${pp}.2" 'claude' Enter
-    tmux select-pane -t "${pp}.3"
+    tmux select-pane -t "${pp}.2"
 }
 
 apply_layout() {
