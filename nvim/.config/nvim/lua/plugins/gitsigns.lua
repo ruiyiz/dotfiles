@@ -71,27 +71,36 @@ return {
       -- ═══════════════════════════════════════════════════════════════════
       --                        GIT OPERATIONS
       -- ═══════════════════════════════════════════════════════════════════
-      -- Stage the current hunk (add to git staging area)
+      -- Hunk operations (lowercase = hunk-level)
       map("n", "<leader>gs", gitsigns.stage_hunk, { desc = "Git stage hunk" })
-
-      -- Reset the current hunk (discard changes)
       map("n", "<leader>gr", gitsigns.reset_hunk, { desc = "Git reset hunk" })
-
-      -- Preview the current hunk in a floating window
+      map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "Git undo stage hunk" })
       map("n", "<leader>gp", gitsigns.preview_hunk, { desc = "Git preview hunk" })
 
-      -- Show git blame for the current line (who changed it and when)
+      -- Visual mode: stage/reset selected lines within a hunk
+      map("v", "<leader>gs", function()
+        gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+      end, { desc = "Git stage selected lines" })
+      map("v", "<leader>gr", function()
+        gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+      end, { desc = "Git reset selected lines" })
+
+      -- Buffer operations (uppercase = whole file)
+      map("n", "<leader>gS", gitsigns.stage_buffer, { desc = "Git stage buffer" })
+      map("n", "<leader>gR", gitsigns.reset_buffer, { desc = "Git reset buffer" })
+
+      -- Info
       map("n", "<leader>gb", function()
-        gitsigns.blame_line({ full = true }) -- full=true shows complete commit info
+        gitsigns.blame_line({ full = true })
       end, { desc = "Git blame line" })
-
-      -- Show diff of current file against the git index (staged changes)
       map("n", "<leader>gd", gitsigns.diffthis, { desc = "Git diff against index" })
-
-      -- Show diff of current file against the last commit
       map("n", "<leader>gD", function()
-        gitsigns.diffthis("~") -- ~ refers to the previous commit
+        gitsigns.diffthis("~")
       end, { desc = "Git diff against last commit" })
+
+      -- Toggles
+      map("n", "<leader>gB", gitsigns.toggle_current_line_blame, { desc = "Toggle inline blame" })
+      map("n", "<leader>gx", gitsigns.toggle_deleted, { desc = "Toggle deleted lines" })
 
       -- ═══════════════════════════════════════════════════════════════════
       --                          TEXT OBJECTS
