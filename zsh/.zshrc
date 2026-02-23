@@ -203,6 +203,11 @@ if command -v fzf &>/dev/null; then
     eval "$(fzf --zsh)"
 fi
 
+# zoxide
+if command -v zoxide &>/dev/null; then
+    eval "$(zoxide init zsh)"
+fi
+
 # Start keychain and add all id_* keys, but only on Linux systems
 # NOTE: install keychain:
 #   sudo apt install keychain

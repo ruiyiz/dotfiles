@@ -157,6 +157,13 @@
         "method": "script",
         "url": "https://astral.sh/uv/install.sh"
       }
+    },
+    "zoxide": {
+      "macos": { "method": "brew" },
+      "debian": {
+        "method": "script",
+        "url": "https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh"
+      }
     }
   }
 }
