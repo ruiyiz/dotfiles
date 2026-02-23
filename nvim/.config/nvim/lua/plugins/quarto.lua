@@ -99,33 +99,31 @@ return {
       -- successive tmux paste-buffer calls can arrive before radian
       -- re-enables bracketed paste, causing multi-line code to be sent
       -- line-by-line. Combining into one send avoids the race entirely.
+      -- Uses find_code_cells (Tree-sitter + buffer read) instead of otter's
+      -- internal raft, which was producing duplicate/fragmented chunks.
       local function send_cells_combined(range)
-        local otterkeeper = require("otter.keeper")
-        local concat = require("quarto.tools").concat
         local buf = vim.api.nvim_get_current_buf()
-        local lang = otterkeeper.get_current_language_context()
-
-        otterkeeper.sync_raft(buf)
-        local raft = otterkeeper.rafts[buf]
-        if not raft then
-          vim.notify("[Quarto] code runner not initialized for this buffer", vim.log.levels.ERROR)
-          return
-        end
-
-        local chunks = lang and raft.code_chunks[lang] or {}
-        local combined = ""
-        for _, chunk in ipairs(chunks) do
-          if chunk.range.from[1] <= range.to[1] and range.from[1] <= chunk.range.to[1] then
-            combined = combined .. concat(chunk.text)
+        local cells = find_code_cells(buf)
+        local all_lines = {}
+        for _, cell in ipairs(cells) do
+          if cell.start_row <= range.to[1] and range.from[1] <= cell.end_row then
+            local first_line = vim.api.nvim_buf_get_lines(buf, cell.start_row, cell.start_row + 1, false)[1] or ""
+            if first_line:match("^```%s*{r") then
+              local code_lines = vim.api.nvim_buf_get_lines(buf, cell.start_row + 1, cell.end_row - 1, false)
+              for _, line in ipairs(code_lines) do
+                if not line:match("^#|") then
+                  table.insert(all_lines, line)
+                end
+              end
+              table.insert(all_lines, "")
+            end
           end
         end
-
-        if combined == "" then
-          print("No code chunks found for the current language")
+        if #all_lines == 0 then
+          print("No R code chunks found")
           return
         end
-
-        vim.fn["slime#send"](combined)
+        vim.fn["slime#send"](table.concat(all_lines, "\n"))
       end
 
       require("quarto").setup({
