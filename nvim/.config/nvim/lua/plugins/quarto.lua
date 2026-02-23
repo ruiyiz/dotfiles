@@ -94,29 +94,20 @@ return {
         callback = function(ev) highlight_cells(ev.buf) end,
       })
 
-      -- Collect cell texts in a range and send as a single slime call.
-      -- The default run_all/run_above send each cell separately, but rapid
-      -- successive tmux paste-buffer calls can arrive before radian
-      -- re-enables bracketed paste, causing multi-line code to be sent
-      -- line-by-line. Combining into one send avoids the race entirely.
-      -- Uses find_code_cells (Tree-sitter + buffer read) instead of otter's
-      -- internal raft, which was producing duplicate/fragmented chunks.
-      local function send_cells_combined(range)
-        local buf = vim.api.nvim_get_current_buf()
-        local cells = find_code_cells(buf)
+      -- Send a list of cells as a single slime call to avoid bracketed-paste
+      -- race conditions when sending multiple chunks rapidly to radian.
+      local function send_cells_list(buf, cells_list)
         local all_lines = {}
-        for _, cell in ipairs(cells) do
-          if cell.start_row <= range.to[1] and range.from[1] <= cell.end_row then
-            local first_line = vim.api.nvim_buf_get_lines(buf, cell.start_row, cell.start_row + 1, false)[1] or ""
-            if first_line:match("^```%s*{r") then
-              local code_lines = vim.api.nvim_buf_get_lines(buf, cell.start_row + 1, cell.end_row - 1, false)
-              for _, line in ipairs(code_lines) do
-                if not line:match("^#|") then
-                  table.insert(all_lines, line)
-                end
+        for _, cell in ipairs(cells_list) do
+          local first_line = vim.api.nvim_buf_get_lines(buf, cell.start_row, cell.start_row + 1, false)[1] or ""
+          if first_line:match("^```%s*{r") then
+            local code_lines = vim.api.nvim_buf_get_lines(buf, cell.start_row + 1, cell.end_row - 1, false)
+            for _, line in ipairs(code_lines) do
+              if not line:match("^#|") then
+                table.insert(all_lines, line)
               end
-              table.insert(all_lines, "")
             end
+            table.insert(all_lines, "")
           end
         end
         if #all_lines == 0 then
@@ -124,6 +115,16 @@ return {
           return
         end
         vim.fn["slime#send"](table.concat(all_lines, "\n"))
+      end
+
+      -- Returns the index of the cell containing `row`, or nil if between cells.
+      local function find_current_cell_index(cells, row)
+        for i, cell in ipairs(cells) do
+          if cell.start_row <= row and row <= cell.end_row then
+            return i
+          end
+        end
+        return nil
       end
 
       require("quarto").setup({
@@ -157,15 +158,60 @@ return {
             runner.run_cell()
             goto_next_cell()
           end, "Run cell and advance")
-          map("n", "<localleader>rl", runner.run_line,  "Run line")
-          map("n", "<localleader>ra", function()
-            local y = vim.api.nvim_win_get_cursor(0)[1] - 1
-            send_cells_combined({ from = { 0, 0 }, to = { y, 0 } })
-          end, "Run cell and above")
-          map("n", "<localleader>rA", function()
-            send_cells_combined({ from = { 0, 0 }, to = { math.huge, 0 } })
+          map("n", "<localleader>rl", runner.run_line, "Run line")
+          map("n", "<localleader>rR", function()
+            send_cells_list(buf, find_code_cells(buf))
           end, "Run all cells")
-          map("v", "<localleader>r",  runner.run_range, "Run visual selection")
+          map("n", "<localleader>rA", function()
+            local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+            local cells = find_code_cells(buf)
+            local idx = find_current_cell_index(cells, row)
+            local limit = idx and (idx - 1) or #cells
+            local above = {}
+            for i = 1, limit do above[#above + 1] = cells[i] end
+            send_cells_list(buf, above)
+          end, "Run all above (exclusive)")
+          map("n", "<localleader>rB", function()
+            local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+            local cells = find_code_cells(buf)
+            local idx = find_current_cell_index(cells, row)
+            local below = {}
+            for i = (idx and idx + 1 or 1), #cells do below[#below + 1] = cells[i] end
+            send_cells_list(buf, below)
+          end, "Run all below (exclusive)")
+          map("n", "<localleader>ra", function()
+            local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+            local cells = find_code_cells(buf)
+            local idx = find_current_cell_index(cells, row)
+            local prev
+            if idx and idx > 1 then
+              prev = idx - 1
+            elseif not idx then
+              for i = #cells, 1, -1 do
+                if cells[i].end_row < row then prev = i; break end
+              end
+            end
+            if prev then send_cells_list(buf, { cells[prev] }) else print("No previous cell") end
+          end, "Run prev cell")
+          map("n", "<localleader>rb", function()
+            local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+            local cells = find_code_cells(buf)
+            local idx = find_current_cell_index(cells, row)
+            local nxt
+            if idx and idx < #cells then
+              nxt = idx + 1
+            elseif not idx then
+              for i = 1, #cells do
+                if cells[i].start_row > row then nxt = i; break end
+              end
+            end
+            if nxt then send_cells_list(buf, { cells[nxt] }) else print("No next cell") end
+          end, "Run next cell")
+          -- <Plug>SlimeRegionSend uses `:call` which exits visual mode first,
+          -- ensuring '< and '> marks are updated before slime#send_range runs.
+          -- remap=true is required for <Plug> expansion (map helper uses noremap).
+          vim.keymap.set("v", "<localleader>r", "<Plug>SlimeRegionSend",
+            { buffer = buf, desc = "Run visual selection", silent = true, remap = true })
           map("n", "]x", goto_next_cell, "Next code cell")
           map("n", "[x", goto_prev_cell, "Previous code cell")
           highlight_cells(buf)
