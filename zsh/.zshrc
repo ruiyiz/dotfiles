@@ -169,10 +169,15 @@ detect_os
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Free C-l for tmux/neovim pane navigation; use C-S-l to clear
+# Free C-l for tmux/neovim pane navigation; use C-S-l to clear screen + tmux history
 bindkey -r '^L'
-bindkey '^[[76;6u' clear-screen   # C-S-l via tmux extended-keys (76='L')
-bindkey '^[[108;6u' clear-screen  # C-S-l direct from terminal (108='l')
+_clear_screen_and_history() {
+    zle clear-screen
+    (sleep 0.05 && tmux clear-history) &!
+}
+zle -N _clear_screen_and_history
+bindkey '^[[76;6u' _clear_screen_and_history   # C-S-l via tmux extended-keys (76='L')
+bindkey '^[[108;6u' _clear_screen_and_history  # C-S-l direct from terminal (108='l')
 
 alias vi="nvim"
 alias l="eza -x --icons --grid --group-directories-first"
