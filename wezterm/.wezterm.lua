@@ -6,20 +6,7 @@ local config = wezterm.config_builder()
 
 -- This is where you actually apply your config choices
 
--- Background color: managed by tmux-theme script via ~/.config/wezterm/background
--- Manual overrides (uncomment one to hardcode):
--- config.colors = { background = "#eff1f5" } -- Catppuccin Latte
--- config.colors = { background = "#303446" } -- Catppuccin Frappe
--- config.colors = { background = "#24273a" } -- Catppuccin Macchiato
--- config.colors = { background = "#1e1e2e" } -- Catppuccin Mocha
--- config.colors = { background = "#1a1b26" } -- Tokyo Night Night
--- config.colors = { background = "#222436" } -- Tokyo Night Moon
--- config.colors = { background = "#1f1f28" } -- Kanagawa Wave
--- config.colors = { background = "#181616" } -- Kanagawa Dragon
--- config.colors = { background = "#161616" } -- Oxocarbon
--- config.colors = { background = "#1d2021" } -- Gruvbox Dark Hard
--- config.colors = { background = "#f2e5bc" } -- Gruvbox Light Soft
--- config.colors = { background = "#1a1a1a" } -- Vague
+-- Background color: managed by switch-theme script via ~/.config/wezterm/background
 local bg_file = wezterm.home_dir .. "/.config/wezterm/background"
 wezterm.add_to_config_reload_watch_list(bg_file)
 local f = io.open(bg_file, "r")

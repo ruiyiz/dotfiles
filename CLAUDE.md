@@ -92,7 +92,7 @@ Themes are coordinated across Neovim, tmux, and WezTerm.
 - **Adding a theme**: add a lazy plugin spec (with `lazy = true`), add it to `themery` `dependencies` and `themes` list. For themes without sub-variants (like catppuccin/tokyonight), just add `{ name = "...", colorscheme = "..." }`. For themes that need setup options per variant (like gruvbox), use the `before` field: `before = [[vim.o.background = "dark"; require("gruvbox").setup({ contrast = "hard" })]]`
 
 #### Tmux themes (`tmux/.config/tmux/themes/`)
-- **Script**: `bin/tmux-theme <name>` -- switches tmux theme and WezTerm background simultaneously
+- **Script**: `bin/switch-theme <name>` -- switches tmux theme and WezTerm background simultaneously
 - **Theme files**: `~/.config/tmux/themes/<name>.conf` -- define color variables (`thm_bg`, `thm_fg`, `thm_blue`, etc.) then `source-file ~/.config/tmux/theme-apply.conf`
 - **Shared styles**: `tmux/.config/tmux/theme-apply.conf` -- all `set -g` status bar / border commands, uses variables set by the theme file
 - **Current theme**: stored at `~/.config/tmux/current-theme.conf` (untracked, written by script)
@@ -101,8 +101,8 @@ Themes are coordinated across Neovim, tmux, and WezTerm.
 #### WezTerm background (`wezterm/.wezterm.lua`)
 - Background color is read from `~/.config/wezterm/background` (a plain hex color file)
 - WezTerm watches this file via `add_to_config_reload_watch_list` and hot-reloads on change
-- In WSL, `bin/tmux-theme` also writes to `%USERPROFILE%/.config/wezterm/background` so native WezTerm picks it up
-- **Adding a WezTerm color**: add an entry to the `WEZTERM_COLORS` associative array in `bin/tmux-theme`, keyed by the tmux theme name
+- In WSL, `bin/switch-theme` also writes to `%USERPROFILE%/.config/wezterm/background` so native WezTerm picks it up
+- **Adding a WezTerm color**: add an entry to the `wezterm_color` function in `bin/switch-theme`, keyed by the tmux theme name
 
 ### VS Code Configuration
 - **Cross-platform deployment**: Supports macOS, Linux, and Windows

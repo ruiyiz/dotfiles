@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# tmux-theme: switch tmux and wezterm color themes
-# Usage: tmux-theme [theme-name]
+# switch-theme: switch tmux and wezterm color themes
+# Usage: switch-theme [theme-name]
 
 THEMES_DIR="$HOME/.config/tmux/themes"
-CURRENT="$HOME/.config/tmux/current-theme.conf"
-CURRENT_NAME="$HOME/.config/tmux/current-theme-name"
+CURRENT="$HOME/.local/state/tmux/current-theme.conf"
+CURRENT_NAME="$HOME/.local/state/tmux/current-theme-name"
 WEZTERM_BG="$HOME/.config/wezterm/background"
 
 # Theme → WezTerm background color mapping
@@ -50,6 +50,7 @@ if [[ ! -f "$theme_file" ]]; then
 fi
 
 # Apply tmux theme
+mkdir -p "$(dirname "$CURRENT")"
 cp "$theme_file" "$CURRENT"
 echo "$theme" > "$CURRENT_NAME"
 
