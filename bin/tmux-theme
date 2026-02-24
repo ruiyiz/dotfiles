@@ -8,24 +8,27 @@ CURRENT_NAME="$HOME/.config/tmux/current-theme-name"
 WEZTERM_BG="$HOME/.config/wezterm/background"
 
 # Theme → WezTerm background color mapping
-declare -A WEZTERM_COLORS=(
-    [catppuccin-latte]="#eff1f5"
-    [catppuccin-frappe]="#303446"
-    [catppuccin-macchiato]="#24273a"
-    [catppuccin-mocha]="#1e1e2e"
-    [tokyonight-night]="#1a1b26"
-    [tokyonight-moon]="#222436"
-    [kanagawa-wave]="#1f1f28"
-    [kanagawa-dragon]="#181616"
-    [oxocarbon]="#161616"
-    [gruvbox-dark-hard]="#1d2021"
-    [gruvbox-dark-medium]="#282828"
-    [gruvbox-dark-soft]="#32302f"
-    [gruvbox-light-hard]="#f9f5d7"
-    [gruvbox-light-medium]="#fbf1c7"
-    [gruvbox-light-soft]="#f2e5bc"
-    [vague]="#1a1a1a"
-)
+wezterm_color() {
+    case "$1" in
+        catppuccin-latte)      echo "#eff1f5" ;;
+        catppuccin-frappe)     echo "#303446" ;;
+        catppuccin-macchiato)  echo "#24273a" ;;
+        catppuccin-mocha)      echo "#1e1e2e" ;;
+        tokyonight-night)      echo "#1a1b26" ;;
+        tokyonight-moon)       echo "#222436" ;;
+        kanagawa-wave)         echo "#1f1f28" ;;
+        kanagawa-dragon)       echo "#181616" ;;
+        oxocarbon)             echo "#161616" ;;
+        gruvbox-dark-hard)     echo "#1d2021" ;;
+        gruvbox-dark-medium)   echo "#282828" ;;
+        gruvbox-dark-soft)     echo "#32302f" ;;
+        gruvbox-light-hard)    echo "#f9f5d7" ;;
+        gruvbox-light-medium)  echo "#fbf1c7" ;;
+        gruvbox-light-soft)    echo "#f2e5bc" ;;
+        vague)                 echo "#1a1a1a" ;;
+        *)                     echo "" ;;
+    esac
+}
 
 if [[ $# -eq 0 ]]; then
     current=$(cat "$CURRENT_NAME" 2>/dev/null || echo "none")
@@ -55,8 +58,8 @@ if [[ -n "${TMUX:-}" ]]; then
 fi
 
 # Apply wezterm background
-if [[ -n "${WEZTERM_COLORS[$theme]+_}" ]]; then
-    color="${WEZTERM_COLORS[$theme]}"
+color="$(wezterm_color "$theme")"
+if [[ -n "$color" ]]; then
     mkdir -p "$(dirname "$WEZTERM_BG")"
     echo "$color" > "$WEZTERM_BG"
 

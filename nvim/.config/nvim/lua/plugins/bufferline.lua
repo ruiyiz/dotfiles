@@ -31,13 +31,13 @@ return {
         --                           APPEARANCE
         -- ═══════════════════════════════════════════════════════════════════
         -- Style of the tabs ("slant", "slope", "thick", "thin")
-        separator_style = "thin",
+        separator_style = "slope",
 
         -- Show buffer numbers for easy navigation (1, 2, 3, etc.)
-        -- numbers = "ordinal",
+        numbers = "ordinal",
 
         -- Show close button on tabs
-        show_close_icon = true,
+        show_close_icon = false,
         show_buffer_close_icons = true,
 
         -- Show file type icons
@@ -46,10 +46,11 @@ return {
         -- Show modified indicator (dot when file has unsaved changes)
         modified_icon = "●",
 
-        -- Maximum length of buffer names before truncating
-        max_name_length = 30,
+        -- Tab width and name length
+        tab_size = 12,
+        max_name_length = 20,
         max_prefix_length = 15,
-        truncate_names = false,
+        truncate_names = true,
 
         -- Strip extension and middle-truncate long names
         name_formatter = function(buf)
@@ -103,12 +104,12 @@ return {
         -- ═══════════════════════════════════════════════════════════════════
         -- Custom highlight groups (automatically syncs with catppuccin)
         -- You can customize these if you want different colors:
-        -- highlights = {
-        --   buffer_selected = {
-        --     bold = true,
-        --     italic = false,
-        --   },
-        -- },
+        highlights = {
+          buffer_selected = {
+            bold = true,
+            italic = false,
+          },
+        },
       },
     })
 
