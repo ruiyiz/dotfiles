@@ -173,7 +173,7 @@ detect_os
 bindkey -r '^L'
 _clear_screen_and_history() {
     zle clear-screen
-    (sleep 0.05 && tmux clear-history) &!
+    [[ -n $TMUX ]] && (sleep 0.05 && tmux clear-history) &!
 }
 zle -N _clear_screen_and_history
 bindkey '^[[76;6u' _clear_screen_and_history   # C-S-l via tmux extended-keys (76='L')
