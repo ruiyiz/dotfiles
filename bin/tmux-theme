@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# tmux-theme: switch tmux and wezterm color themes
+# Usage: tmux-theme [theme-name]
+
+THEMES_DIR="$HOME/.config/tmux/themes"
+CURRENT="$HOME/.config/tmux/current-theme.conf"
+CURRENT_NAME="$HOME/.config/tmux/current-theme-name"
+WEZTERM_BG="$HOME/.config/wezterm/background"
+
+# Theme → WezTerm background color mapping
+declare -A WEZTERM_COLORS=(
+    [catppuccin-latte]="#eff1f5"
+    [catppuccin-frappe]="#303446"
+    [catppuccin-macchiato]="#24273a"
+    [catppuccin-mocha]="#1e1e2e"
+    [tokyonight-night]="#1a1b26"
+    [tokyonight-moon]="#222436"
+    [kanagawa-wave]="#1f1f28"
+    [kanagawa-dragon]="#181616"
+    [oxocarbon]="#161616"
+    [gruvbox-dark-hard]="#1d2021"
+    [gruvbox-dark-medium]="#282828"
+    [gruvbox-dark-soft]="#32302f"
+    [gruvbox-light-hard]="#f9f5d7"
+    [gruvbox-light-medium]="#fbf1c7"
+    [gruvbox-light-soft]="#f2e5bc"
+    [vague]="#1a1a1a"
+)
+
+if [[ $# -eq 0 ]]; then
+    current=$(cat "$CURRENT_NAME" 2>/dev/null || echo "none")
+    echo "Current theme: $current"
+    echo "Available themes:"
+    for f in "$THEMES_DIR"/*.conf; do
+        echo "  $(basename "$f" .conf)"
+    done
+    exit 0
+fi
+
+theme="$1"
+theme_file="$THEMES_DIR/${theme}.conf"
+
+if [[ ! -f "$theme_file" ]]; then
+    echo "Theme '$theme' not found."
+    echo "Available: $(ls "$THEMES_DIR" | sed 's/\.conf$//' | tr '\n' ' ')"
+    exit 1
+fi
+
+# Apply tmux theme
+cp "$theme_file" "$CURRENT"
+echo "$theme" > "$CURRENT_NAME"
+
+if [[ -n "${TMUX:-}" ]]; then
+    tmux source-file ~/.tmux.conf
+fi
+
+# Apply wezterm background
+if [[ -n "${WEZTERM_COLORS[$theme]+_}" ]]; then
+    color="${WEZTERM_COLORS[$theme]}"
+    mkdir -p "$(dirname "$WEZTERM_BG")"
+    echo "$color" > "$WEZTERM_BG"
+
+    # In WSL, also write to the Windows filesystem so native WezTerm picks it up
+    if grep -qi microsoft /proc/version 2>/dev/null; then
+        WIN_HOME="$(wslpath "$(cmd.exe /C 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")"
+        WIN_BG="$WIN_HOME/.config/wezterm/background"
+        mkdir -p "$(dirname "$WIN_BG")"
+        echo "$color" > "$WIN_BG"
+    fi
+
+    echo "Theme '$theme' applied (tmux + wezterm)."
+else
+    echo "Theme '$theme' applied (tmux only; no wezterm mapping defined)."
+fi

@@ -23,3 +23,12 @@ fi
 
 cp "$SOURCE" "$DEST"
 echo "Synced WezTerm config to $DEST"
+
+# Sync background color file if it exists
+WSL_BG="$HOME/.config/wezterm/background"
+WIN_BG="$WIN_HOME/.config/wezterm/background"
+if [ -f "$WSL_BG" ]; then
+    mkdir -p "$(dirname "$WIN_BG")"
+    cp "$WSL_BG" "$WIN_BG"
+    echo "Synced WezTerm background color to $WIN_BG"
+fi

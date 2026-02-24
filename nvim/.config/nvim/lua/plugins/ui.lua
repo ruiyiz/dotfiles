@@ -81,12 +81,8 @@ return {
     -- Gruvbox: retro warm amber/earth tones on near-black
     "ellisonleao/gruvbox.nvim",
     lazy = true,
-    opts = {
-      contrast = "hard", -- "hard" for darkest background (#1d2021)
-    },
-    config = function(_, opts)
-      require("gruvbox").setup(opts)
-    end,
+    -- contrast and background are set per-theme in themery's `before` field
+    config = function() end,
   },
 
   {
@@ -116,14 +112,45 @@ return {
     config = function()
       require("themery").setup({
         themes = {
-          { name = "Catppuccin Mocha",     colorscheme = "catppuccin-mocha" },
+          { name = "Catppuccin Latte",     colorscheme = "catppuccin-latte" },
+          { name = "Catppuccin Frappe",    colorscheme = "catppuccin-frappe" },
           { name = "Catppuccin Macchiato", colorscheme = "catppuccin-macchiato" },
+          { name = "Catppuccin Mocha",     colorscheme = "catppuccin-mocha" },
           { name = "Tokyo Night Night",    colorscheme = "tokyonight-night" },
           { name = "Tokyo Night Moon",     colorscheme = "tokyonight-moon" },
           { name = "Kanagawa Dragon",      colorscheme = "kanagawa-dragon" },
           { name = "Kanagawa Wave",        colorscheme = "kanagawa-wave" },
           { name = "Oxocarbon",            colorscheme = "oxocarbon" },
-          { name = "Gruvbox Hard",         colorscheme = "gruvbox" },
+          {
+            name = "Gruvbox Dark Hard",
+            colorscheme = "gruvbox",
+            before = [[vim.o.background = "dark"; require("gruvbox").setup({ contrast = "hard" })]],
+          },
+          {
+            name = "Gruvbox Dark Medium",
+            colorscheme = "gruvbox",
+            before = [[vim.o.background = "dark"; require("gruvbox").setup({ contrast = "medium" })]],
+          },
+          {
+            name = "Gruvbox Dark Soft",
+            colorscheme = "gruvbox",
+            before = [[vim.o.background = "dark"; require("gruvbox").setup({ contrast = "soft" })]],
+          },
+          {
+            name = "Gruvbox Light Hard",
+            colorscheme = "gruvbox",
+            before = [[vim.o.background = "light"; require("gruvbox").setup({ contrast = "hard" })]],
+          },
+          {
+            name = "Gruvbox Light Medium",
+            colorscheme = "gruvbox",
+            before = [[vim.o.background = "light"; require("gruvbox").setup({ contrast = "medium" })]],
+          },
+          {
+            name = "Gruvbox Light Soft",
+            colorscheme = "gruvbox",
+            before = [[vim.o.background = "light"; require("gruvbox").setup({ contrast = "soft" })]],
+          },
           { name = "Vague",                colorscheme = "vague" },
         },
         livePreview = true,

@@ -70,7 +70,7 @@ The zsh configuration includes:
 ### Neovim Setup
 - **Architecture**: Custom minimal config (not Kickstart.nvim based)
 - **Plugin Manager**: Lazy.nvim with automatic bootstrapping
-- **Colorscheme**: Catppuccin Mocha (dark, warm theme)
+- **Colorscheme**: Managed by Themery (`<leader>ft`), persists across sessions
 - **Leader Key**: Space (matches VS Code workflow)
 - **Core Plugins**:
   - Treesitter: Syntax highlighting for Python, R, SQL, Markdown, Lua
@@ -78,9 +78,31 @@ The zsh configuration includes:
   - Which-key: Keybinding hints and discovery
   - Gitsigns: Git integration with sign column and hunk operations
   - Bufferline: IDE-style tab bar for visual buffer management
-  - Lualine: Informative statusline with mode, git, diagnostics
+  - Lualine: Informative statusline with mode, git, diagnostics (theme: `"auto"`)
 - **Focus**: Data science and light terminal editing (Python, R, SQL, Markdown)
 - **Key Features**: Space-leader workflow, buffer-centric navigation, git integration
+
+### Theme Management
+
+Themes are coordinated across Neovim, tmux, and WezTerm.
+
+#### Neovim themes (`nvim/.config/nvim/lua/plugins/ui.lua`)
+- **Plugin**: `themery.nvim` -- persistent switcher, `<leader>ft` to open
+- **Installed colorschemes**: catppuccin (all 4 flavors), tokyonight (night/moon), kanagawa (dragon/wave), oxocarbon, gruvbox (6 variants via `before` hook), vague
+- **Adding a theme**: add a lazy plugin spec (with `lazy = true`), add it to `themery` `dependencies` and `themes` list. For themes without sub-variants (like catppuccin/tokyonight), just add `{ name = "...", colorscheme = "..." }`. For themes that need setup options per variant (like gruvbox), use the `before` field: `before = [[vim.o.background = "dark"; require("gruvbox").setup({ contrast = "hard" })]]`
+
+#### Tmux themes (`tmux/.config/tmux/themes/`)
+- **Script**: `bin/tmux-theme <name>` -- switches tmux theme and WezTerm background simultaneously
+- **Theme files**: `~/.config/tmux/themes/<name>.conf` -- define color variables (`thm_bg`, `thm_fg`, `thm_blue`, etc.) then `source-file ~/.config/tmux/theme-apply.conf`
+- **Shared styles**: `tmux/.config/tmux/theme-apply.conf` -- all `set -g` status bar / border commands, uses variables set by the theme file
+- **Current theme**: stored at `~/.config/tmux/current-theme.conf` (untracked, written by script)
+- **Adding a tmux theme**: create `tmux/.config/tmux/themes/<name>.conf` with the color variables and a `source-file ~/.config/tmux/theme-apply.conf` at the end; run `stow` to deploy
+
+#### WezTerm background (`wezterm/.wezterm.lua`)
+- Background color is read from `~/.config/wezterm/background` (a plain hex color file)
+- WezTerm watches this file via `add_to_config_reload_watch_list` and hot-reloads on change
+- In WSL, `bin/tmux-theme` also writes to `%USERPROFILE%/.config/wezterm/background` so native WezTerm picks it up
+- **Adding a WezTerm color**: add an entry to the `WEZTERM_COLORS` associative array in `bin/tmux-theme`, keyed by the tmux theme name
 
 ### VS Code Configuration
 - **Cross-platform deployment**: Supports macOS, Linux, and Windows
@@ -112,4 +134,3 @@ The user can toggle auto-follow in Neovim with `<leader>af`. When follow is off,
 ### Shell Features
 - SSH key management with keychain (Linux only)
 - Custom PATH modifications for Doom Emacs and local binaries
-- Yazi file manager integration for terminal navigation
