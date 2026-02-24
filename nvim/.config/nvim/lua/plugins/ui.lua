@@ -3,7 +3,8 @@
   │                             UI PLUGINS                                  │
   │                                                                         │
   │ This file contains plugins that enhance Neovim's visual appearance:    │
-  │ - Colorscheme (catppuccin) for pleasant colors                         │
+  │ - Colorschemes (catppuccin, tokyonight, kanagawa, oxocarbon, gruvbox)  │
+  │ - Themery: persistent theme switcher (<leader>ft)                       │
   │ - Statusline (lualine) for informative bottom bar                      │
   │                                                                         │
   │ These make Neovim look modern and provide useful visual feedback.      │
@@ -19,55 +20,116 @@ return {
   },
 
   -- ╭─────────────────────────────────────────────────────────────────────────╮
-  -- │                            COLORSCHEME                                  │
+  -- │                            COLORSCHEMES                                  │
   -- ╰─────────────────────────────────────────────────────────────────────────╯
   {
-    -- Catppuccin colorscheme - modern, warm colors that are easy on the eyes
     "catppuccin/nvim",
-
-    -- Use "catppuccin" as the name when calling the colorscheme
     name = "catppuccin",
-
-    -- Load this plugin first (high priority) since other plugins depend on colors
-    priority = 1000,
-
-    -- Configuration options for catppuccin
+    lazy = true,
     opts = {
-      -- Choose the flavor: "latte" (light), "frappe" (mid), "macchiato" (dark), "mocha" (darkest)
       flavour = "mocha",
-
-      -- Automatic background detection
-      background = {
-        light = "latte", -- Use latte when Neovim is in light mode
-        dark = "mocha",  -- Use mocha when Neovim is in dark mode
-      },
-
-      -- Set to true for transparent background (uses terminal background)
+      background = { light = "latte", dark = "mocha" },
       transparent_background = false,
-
-      -- Enable integrations with other plugins for consistent theming
       integrations = {
-        treesitter = true,               -- Style syntax highlighting
-        telescope = { enabled = true },  -- Style telescope picker
-        which_key = true,               -- Style which-key popup
-        gitsigns = true,                -- Style git signs in gutter
-        bufferline = true,              -- Style bufferline tabs
-        cmp = true,                     -- Style completion popup
-        noice = true,                   -- Style noice cmdline popup
-        -- Add more integrations as you install plugins:
-        -- lsp_trouble = true,          -- For diagnostics
+        treesitter = true,
+        telescope = { enabled = true },
+        which_key = true,
+        gitsigns = true,
+        bufferline = true,
+        cmp = true,
+        noice = true,
       },
     },
-
-    -- Configuration function (runs after plugin loads)
     config = function(_, opts)
       opts.custom_highlights = function(colors)
-        return {
-          CodeCell = { bg = colors.surface0 },
-        }
+        return { CodeCell = { bg = colors.surface0 } }
       end
       require("catppuccin").setup(opts)
-      vim.cmd.colorscheme("catppuccin")
+    end,
+  },
+
+  {
+    "folke/tokyonight.nvim",
+    lazy = true,
+    opts = { style = "night", transparent = false },
+    config = function(_, opts)
+      require("tokyonight").setup(opts)
+    end,
+  },
+
+  {
+    -- Kanagawa: Japanese woodblock print inspired palette
+    "rebelot/kanagawa.nvim",
+    lazy = true,
+    opts = {
+      -- Themes: "wave" (default dark), "dragon" (darker), "lotus" (light)
+      theme = "dragon",
+      background = { dark = "dragon", light = "lotus" },
+    },
+    config = function(_, opts)
+      require("kanagawa").setup(opts)
+    end,
+  },
+
+  {
+    -- Oxocarbon: IBM Carbon design, near-black background
+    "nyoom-engineering/oxocarbon.nvim",
+    lazy = true,
+  },
+
+  {
+    -- Gruvbox: retro warm amber/earth tones on near-black
+    "ellisonleao/gruvbox.nvim",
+    lazy = true,
+    opts = {
+      contrast = "hard", -- "hard" for darkest background (#1d2021)
+    },
+    config = function(_, opts)
+      require("gruvbox").setup(opts)
+    end,
+  },
+
+  {
+    -- Vague: muted, desaturated dark theme with soft contrast
+    "vague-theme/vague.nvim",
+    lazy = true,
+    opts = {},
+    config = function(_, opts)
+      require("vague").setup(opts)
+    end,
+  },
+
+  -- ╭─────────────────────────────────────────────────────────────────────────╮
+  -- │                          THEME MANAGER                                  │
+  -- ╰─────────────────────────────────────────────────────────────────────────╯
+  {
+    -- Themery: persistent theme switcher with a simple UI
+    "zaldih/themery.nvim",
+    dependencies = {
+      "catppuccin/nvim",
+      "folke/tokyonight.nvim",
+      "rebelot/kanagawa.nvim",
+      "nyoom-engineering/oxocarbon.nvim",
+      "ellisonleao/gruvbox.nvim",
+      "vague-theme/vague.nvim",
+    },
+    config = function()
+      require("themery").setup({
+        themes = {
+          { name = "Catppuccin Mocha",     colorscheme = "catppuccin-mocha" },
+          { name = "Catppuccin Macchiato", colorscheme = "catppuccin-macchiato" },
+          { name = "Tokyo Night Night",    colorscheme = "tokyonight-night" },
+          { name = "Tokyo Night Moon",     colorscheme = "tokyonight-moon" },
+          { name = "Kanagawa Dragon",      colorscheme = "kanagawa-dragon" },
+          { name = "Kanagawa Wave",        colorscheme = "kanagawa-wave" },
+          { name = "Oxocarbon",            colorscheme = "oxocarbon" },
+          { name = "Gruvbox Hard",         colorscheme = "gruvbox" },
+          { name = "Vague",                colorscheme = "vague" },
+        },
+        livePreview = true,
+      })
+
+      vim.keymap.set("n", "<leader>ft", "<cmd>Themery<cr>", { desc = "[F]ind [T]heme" })
     end,
   },
 
@@ -75,53 +137,32 @@ return {
   -- │                             STATUSLINE                                  │
   -- ╰─────────────────────────────────────────────────────────────────────────╯
   {
-    -- Lualine provides a informative statusline at the bottom of Neovim
     "nvim-lualine/lualine.nvim",
-
-    -- Requires devicons for file type icons (optional but nice)
     dependencies = { "nvim-tree/nvim-web-devicons" },
-
-    -- Configuration
     config = function()
       require("lualine").setup({
         options = {
-          icons_enabled = true,      -- Show file type and git icons
-          theme = "catppuccin",      -- Match our colorscheme
-
-          -- Separators between components and sections
-          component_separators = { left = "", right = "" },  -- Simple separators
-          section_separators = { left = "", right = "" },    -- Rounded section separators
+          icons_enabled = true,
+          theme = "auto", -- Automatically matches the active colorscheme
+          component_separators = { left = "", right = "" },
+          section_separators = { left = "", right = "" },
         },
-
-        -- ═══════════════════════════════════════════════════════════════════
-        --                       ACTIVE WINDOW SECTIONS
-        -- ═══════════════════════════════════════════════════════════════════
-        -- Layout: |a|b|c|          |x|y|z|
         sections = {
-          lualine_a = { "mode" },                    -- Current mode (NORMAL, INSERT, etc.)
-          lualine_b = { "branch", "diff", "diagnostics" }, -- Git branch, changes, LSP diagnostics
-          lualine_c = { "filename" },                -- Current file name
-          lualine_x = { "encoding", "fileformat", "filetype" }, -- File encoding, format, type
-          lualine_y = { "progress" },                -- File position percentage
-          lualine_z = { "location" },                -- Line and column number
+          lualine_a = { "mode" },
+          lualine_b = { "branch", "diff", "diagnostics" },
+          lualine_c = { "filename" },
+          lualine_x = { "encoding", "fileformat", "filetype" },
+          lualine_y = { "progress" },
+          lualine_z = { "location" },
         },
-
-        -- ═══════════════════════════════════════════════════════════════════
-        --                      INACTIVE WINDOW SECTIONS
-        -- ═══════════════════════════════════════════════════════════════════
-        -- Simpler statusline for windows that don't have focus
         inactive_sections = {
           lualine_a = {},
           lualine_b = {},
-          lualine_c = { "filename" }, -- Just show filename
-          lualine_x = { "location" }, -- Just show position
+          lualine_c = { "filename" },
+          lualine_x = { "location" },
           lualine_y = {},
           lualine_z = {},
         },
-
-        -- Other options you can configure:
-        -- tabline = {},    -- Top line showing tabs/buffers
-        -- extensions = {}, -- Special handling for filetypes like NvimTree
       })
     end,
   },
