@@ -40,12 +40,6 @@ return {
         noice = true,
       },
     },
-    config = function(_, opts)
-      opts.custom_highlights = function(colors)
-        return { CodeCell = { bg = colors.surface0 } }
-      end
-      require("catppuccin").setup(opts)
-    end,
   },
 
   {

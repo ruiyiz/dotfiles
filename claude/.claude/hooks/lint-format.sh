@@ -54,9 +54,9 @@ case "$ext" in
         ;;
 esac
 
-# R / Quarto: air (format)
+# R: air (format)
 case "$ext" in
-    R|r|qmd)
+    R|r)
         command -v air &>/dev/null && air format "$file_path" 2>/dev/null
         ;;
 esac

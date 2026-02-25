@@ -39,6 +39,27 @@ return {
     config = function()
       local ns = vim.api.nvim_create_namespace("quarto_cell_hl")
 
+      local function set_codecell_hl()
+        local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
+        local bg = normal.bg
+        if not bg then return end
+        local r = math.floor(bg / 0x10000) % 256
+        local g = math.floor(bg / 0x100) % 256
+        local b = bg % 256
+        local factor = 0.09
+        if vim.o.background == "dark" then
+          r = math.floor(r + (255 - r) * factor)
+          g = math.floor(g + (255 - g) * factor)
+          b = math.floor(b + (255 - b) * factor)
+        else
+          r = math.floor(r * (1 - factor))
+          g = math.floor(g * (1 - factor))
+          b = math.floor(b * (1 - factor))
+        end
+        vim.api.nvim_set_hl(0, "CodeCell", { bg = r * 0x10000 + g * 0x100 + b })
+      end
+      set_codecell_hl()
+
       local function find_code_cells(buf)
         local ok, parser = pcall(vim.treesitter.get_parser, buf)
         if not ok or not parser then return {} end
@@ -88,10 +109,17 @@ return {
         end
       end
 
+      local hl_augroup = vim.api.nvim_create_augroup("QuartoCellHighlight", { clear = true })
+
       vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "TextChangedI" }, {
         pattern = { "*.qmd", "*.md" },
-        group = vim.api.nvim_create_augroup("QuartoCellHighlight", { clear = true }),
+        group = hl_augroup,
         callback = function(ev) highlight_cells(ev.buf) end,
+      })
+
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = hl_augroup,
+        callback = set_codecell_hl,
       })
 
       -- Send a list of cells as a single slime call to avoid bracketed-paste
