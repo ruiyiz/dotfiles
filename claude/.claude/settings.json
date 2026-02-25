@@ -98,6 +98,10 @@
             "type": "command",
             "command": "$HOME/.claude/hooks/nvim-sync.sh",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/lint-format.sh"
           }
         ]
       }

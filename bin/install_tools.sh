@@ -93,9 +93,13 @@ strip_v() { echo "${1#v}"; }
 # --- Install methods ---
 
 install_brew() {
-    local pkg="$1"
+    local pkg="$1" formula="$2"
     log "brew: $pkg"
-    brew upgrade "$pkg" 2>/dev/null || brew install "$pkg"
+    if brew list "$pkg" &>/dev/null; then
+        brew upgrade "$formula" 2>/dev/null || true
+    else
+        brew install "$formula"
+    fi
 }
 
 install_apt() {
@@ -188,7 +192,9 @@ install_github_binary() {
     fi
 
     chmod +x "$bin"
-    sudo mv "$bin" "/usr/local/bin/$binary_name"
+    local bin_dir
+    bin_dir="$([ "$PLATFORM" = "macos" ] && echo "/opt/homebrew/bin" || echo "/usr/local/bin")"
+    [ "$PLATFORM" = "macos" ] && mv "$bin" "$bin_dir/$binary_name" || sudo mv "$bin" "$bin_dir/$binary_name"
     rm -rf "$tmp_dir"
 }
 
@@ -433,94 +439,84 @@ run() {
             continue
         fi
 
-        local method
-        method="$(jq -r --arg p "$PLATFORM" --arg n "$name" '.packages[$n][$p].method' "$conf")"
-
         local rc=0
-        case "$method" in
-            brew)
-                install_brew "$name" || rc=$?
-                ;;
-            apt)
-                install_apt "$name" || rc=$?
-                ;;
-            apt_repo)
-                local gpg_url keyring_name repo_line pkg
-                gpg_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].gpg_url' "$conf")"
-                keyring_name="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].keyring_name' "$conf")"
-                repo_line="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo_line' "$conf")"
-                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")"
-                install_apt_repo "$gpg_url" "$keyring_name" "$repo_line" "$pkg" || rc=$?
-                ;;
-            github_deb)
-                local repo asset
-                repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")"
-                asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")"
-                install_github_deb "$repo" "$asset" || rc=$?
-                ;;
-            github_binary)
-                local repo asset binary
-                repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")"
-                asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")"
-                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
-                install_github_binary "$repo" "$asset" "$binary" || rc=$?
-                ;;
-            github_tarball)
-                local repo asset binary install_dir
-                repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")"
-                asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")"
-                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
-                install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")"
-                install_github_tarball "$repo" "$asset" "$binary" "$install_dir" || rc=$?
-                ;;
-            url_tarball)
-                local version_url version_jq url binary install_dir pinned_ver
-                version_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version_url // empty' "$conf")"
-                version_jq="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version_jq // empty' "$conf")"
-                url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
-                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
-                install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")"
-                pinned_ver="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version // empty' "$conf")"
-                install_url_tarball "$version_url" "$version_jq" "$url" "$binary" "$install_dir" "$pinned_ver" || rc=$?
-                ;;
-            binary_url)
-                local url binary
-                url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
-                binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")"
-                install_binary_url "$url" "$binary" || rc=$?
-                ;;
-            script)
-                local url
-                url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")"
-                install_script "$url" "$name" || rc=$?
-                ;;
-            pipx)
-                local pkg
-                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")"
-                install_pipx "$pkg" || rc=$?
-                ;;
-            uv_tool)
-                local pkg
-                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")"
-                install_uv_tool "$pkg" || rc=$?
-                ;;
-            go_install)
-                local pkg
-                pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")"
-                install_go_install "$pkg" "$name" || rc=$?
-                ;;
-            git_clone)
-                local repo_url target_dir install_cmd
-                repo_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo_url' "$conf")"
-                target_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].target_dir' "$conf")"
-                install_cmd="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_cmd // empty' "$conf")"
-                install_git_clone "$repo_url" "$target_dir" "$install_cmd" "$name" || rc=$?
-                ;;
-            *)
-                warn "Unknown method '$method' for $name"
-                rc=1
-                ;;
-        esac
+        (
+            method="$(jq -r --arg p "$PLATFORM" --arg n "$name" '.packages[$n][$p].method' "$conf")" || exit 1
+            case "$method" in
+                brew)
+                    formula="$(jq -r --arg p "$PLATFORM" --arg n "$name" '.packages[$n][$p].formula // $n' "$conf")" || exit 1
+                    install_brew "$name" "$formula" || exit $?
+                    ;;
+                apt)
+                    install_apt "$name" || exit $?
+                    ;;
+                apt_repo)
+                    gpg_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].gpg_url' "$conf")" || exit 1
+                    keyring_name="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].keyring_name' "$conf")" || exit 1
+                    repo_line="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo_line' "$conf")" || exit 1
+                    pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")" || exit 1
+                    install_apt_repo "$gpg_url" "$keyring_name" "$repo_line" "$pkg" || exit $?
+                    ;;
+                github_deb)
+                    repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")" || exit 1
+                    asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")" || exit 1
+                    install_github_deb "$repo" "$asset" || exit $?
+                    ;;
+                github_binary)
+                    repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")" || exit 1
+                    asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")" || exit 1
+                    binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")" || exit 1
+                    install_github_binary "$repo" "$asset" "$binary" || exit $?
+                    ;;
+                github_tarball)
+                    repo="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo' "$conf")" || exit 1
+                    asset="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].asset' "$conf")" || exit 1
+                    binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")" || exit 1
+                    install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")" || exit 1
+                    install_github_tarball "$repo" "$asset" "$binary" "$install_dir" || exit $?
+                    ;;
+                url_tarball)
+                    version_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version_url // empty' "$conf")" || exit 1
+                    version_jq="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version_jq // empty' "$conf")" || exit 1
+                    url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")" || exit 1
+                    binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")" || exit 1
+                    install_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_dir' "$conf")" || exit 1
+                    pinned_ver="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].version // empty' "$conf")" || exit 1
+                    install_url_tarball "$version_url" "$version_jq" "$url" "$binary" "$install_dir" "$pinned_ver" || exit $?
+                    ;;
+                binary_url)
+                    url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")" || exit 1
+                    binary="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].binary' "$conf")" || exit 1
+                    install_binary_url "$url" "$binary" || exit $?
+                    ;;
+                script)
+                    url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].url' "$conf")" || exit 1
+                    install_script "$url" "$name" || exit $?
+                    ;;
+                pipx)
+                    pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")" || exit 1
+                    install_pipx "$pkg" || exit $?
+                    ;;
+                uv_tool)
+                    pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")" || exit 1
+                    install_uv_tool "$pkg" || exit $?
+                    ;;
+                go_install)
+                    pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")" || exit 1
+                    install_go_install "$pkg" "$name" || exit $?
+                    ;;
+                git_clone)
+                    repo_url="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].repo_url' "$conf")" || exit 1
+                    target_dir="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].target_dir' "$conf")" || exit 1
+                    install_cmd="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].install_cmd // empty' "$conf")" || exit 1
+                    install_git_clone "$repo_url" "$target_dir" "$install_cmd" "$name" || exit $?
+                    ;;
+                *)
+                    warn "Unknown method '$method' for $name"
+                    exit 1
+                    ;;
+            esac
+        ) || rc=$?
 
         record_result "$name" "$rc"
     done <<< "$tools"
