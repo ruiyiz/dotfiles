@@ -1,15 +1,5 @@
 # CLAUDE.md
 
-## MANDATORY: Use td for Task Management
-
-Run td usage --new-session at conversation start (or after /clear). This tells you what to work on next.
-
-Sessions are automatic (based on terminal/agent context). Optional:
-- td session "name" to label the current session
-- td session --new to force a new session in the same context
-
-Use td usage -q after first read.
-
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Repository Overview
@@ -119,7 +109,7 @@ Themes are coordinated across Neovim, tmux, and WezTerm.
 
 ### Neovim Integration (Agent Sync)
 
-When running inside a `tdev` tmux session, `NVIM_LISTEN_ADDRESS` is set to a Neovim socket. Files edited via Edit/Write tools are automatically opened in the paired Neovim instance (via the `nvim-sync.sh` PostToolUse hook).
+When running inside a `tide` tmux session, `NVIM_LISTEN_ADDRESS` is set to a Neovim socket. Files edited via Edit/Write tools are automatically opened in the paired Neovim instance (via the `nvim-sync.sh` PostToolUse hook).
 
 When the user asks to open a file in Neovim, you MUST use `--remote-send` to send a command to the already-running Neovim instance. NEVER launch a new `nvim` process. The correct command is:
 
@@ -127,7 +117,7 @@ When the user asks to open a file in Neovim, you MUST use `--remote-send` to sen
 nvim --server "$NVIM_LISTEN_ADDRESS" --remote-send "<C-\\><C-n>:edit <filepath><CR>"
 ```
 
-Before running this command, check that `NVIM_LISTEN_ADDRESS` is set and the socket exists. If not, tell the user no Neovim instance is connected and suggest starting a `tdev` session.
+Before running this command, check that `NVIM_LISTEN_ADDRESS` is set and the socket exists. If not, tell the user no Neovim instance is connected and suggest starting a `tide` session.
 
 The user can toggle auto-follow in Neovim with `<leader>af`. When follow is off, buffers still reload but Neovim won't switch to the edited file.
 

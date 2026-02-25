@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Launch a tmux dev session with configurable layouts.
 #
-# Usage: tdev [-l layout] [dir]
+# Usage: tide [-l layout] [dir]
 #
 # Layouts:
 #   default:
@@ -29,7 +29,7 @@ layout="default"
 while getopts "l:" opt; do
     case $opt in
         l) layout="$OPTARG" ;;
-        *) echo "Usage: tdev [-l layout] [dir]" >&2; exit 1 ;;
+        *) echo "Usage: tide [-l layout] [dir]" >&2; exit 1 ;;
     esac
 done
 shift $((OPTIND - 1))

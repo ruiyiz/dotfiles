@@ -134,25 +134,11 @@
         "asset": "ripgrep_{ver}-1_{arch_deb}.deb"
       }
     },
-    "sidecar": {
-      "macos": { "method": "brew" },
-      "debian": {
-        "method": "script",
-        "url": "https://raw.githubusercontent.com/marcus/sidecar/main/scripts/setup.sh"
-      }
-    },
-    "stow": {
+"stow": {
       "macos": { "method": "brew" },
       "debian": { "method": "apt" }
     },
-    "td": {
-      "macos": { "method": "brew" },
-      "debian": {
-        "method": "go_install",
-        "pkg": "github.com/marcus/td@latest"
-      }
-    },
-    "uv": {
+"uv": {
       "debian": {
         "method": "script",
         "url": "https://astral.sh/uv/install.sh"
