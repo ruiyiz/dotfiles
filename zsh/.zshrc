@@ -268,3 +268,7 @@ fi
 if [[ "$IS_MACOS" != "true" ]]; then
     export PATH="$HOME/go/bin:$PATH"
 fi
+
+if [[ "$IS_MACOS" != "true" ]]; then
+    export PATH="$HOME/.turso:$PATH"
+fi

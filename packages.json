@@ -1,5 +1,5 @@
 {
-  "taps": ["marcus/tap", "oven-sh/bun"],
+  "taps": ["marcus/tap", "oven-sh/bun", "tursodatabase/tap"],
   "packages": {
     "air": {
       "macos": {
@@ -167,6 +167,13 @@
       "debian": {
         "method": "go_install",
         "pkg": "mvdan.cc/sh/v3/cmd/shfmt@latest"
+      }
+    },
+    "turso": {
+      "macos": { "method": "brew", "formula": "tursodatabase/tap/turso" },
+      "debian": {
+        "method": "script",
+        "url": "https://get.tur.so/install.sh"
       }
     },
     "stow": {
