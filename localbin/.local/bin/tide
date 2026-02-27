@@ -27,10 +27,13 @@ set -e
 layout="default"
 
 while getopts "l:" opt; do
-    case $opt in
-        l) layout="$OPTARG" ;;
-        *) echo "Usage: tide [-l layout] [dir]" >&2; exit 1 ;;
-    esac
+	case $opt in
+	l) layout="$OPTARG" ;;
+	*)
+		echo "Usage: tide [-l layout] [dir]" >&2
+		exit 1
+		;;
+	esac
 done
 shift $((OPTIND - 1))
 
@@ -53,60 +56,74 @@ rand_noun() { echo "${nouns[RANDOM % ${#nouns[@]}]}"; }
 #   $2 = pane prefix (e.g. "@42" inside tmux, "session:1" outside)
 
 layout_default() {
-    local target="$1" pp="$2"
+	local target="$1" pp="$2"
 
-    tmux split-window -h -t "$target" -c "$dir" -l "50%"
-    tmux split-window -v -t "${pp}.1" -c "$dir" -l "40%"
+	tmux split-window -h -t "$target" -c "$dir" -l "50%"
+	tmux split-window -v -t "${pp}.1" -c "$dir" -l "40%"
 
-    local repl_pane
-    repl_pane=$(tmux display-message -p -t "${pp}.2" "#{pane_id}")
-    tmux send-keys -t "${pp}.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
+	local repl_pane
+	repl_pane=$(tmux display-message -p -t "${pp}.2" "#{pane_id}")
+	tmux send-keys -t "${pp}.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
 
-    local nvim_pane_id nvim_sock
-    nvim_pane_id=$(tmux display-message -p -t "${pp}.1" "#{pane_id}")
-    nvim_sock="/tmp/nvim-tdev-${nvim_pane_id#%}.sock"
-    tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
-    tmux send-keys -t "${pp}.3" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
-    tmux send-keys -t "${pp}.3" 'claude' Enter
-    tmux select-pane -t "${pp}.3"
+	local nvim_pane_id nvim_sock
+	nvim_pane_id=$(tmux display-message -p -t "${pp}.1" "#{pane_id}")
+	nvim_sock="/tmp/nvim-tdev-${nvim_pane_id#%}.sock"
+	tmux send-keys -t "${pp}.1" 'clear' Enter
+	tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
+	tmux send-keys -t "${pp}.2" 'clear' Enter
+	tmux send-keys -t "${pp}.3" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
+	tmux send-keys -t "${pp}.3" 'clear' Enter
+	tmux send-keys -t "${pp}.3" 'claude' Enter
+	tmux select-pane -t "${pp}.3"
+	tmux set-option -w -t "$target" @tide-window 1
 }
 
 layout_3col() {
-    local target="$1" pp="$2"
+	local target="$1" pp="$2"
 
-    # Split into 33% left / 67% right
-    tmux split-window -h -t "$target" -c "$dir" -l "67%"
-    # Split the right portion 50/50 (33/34 of total)
-    tmux split-window -h -t "${pp}.2" -c "$dir" -l "50%"
+	# Split into 33% left / 67% right
+	tmux split-window -h -t "$target" -c "$dir" -l "67%"
+	# Split the right portion 50/50 (33/34 of total)
+	tmux split-window -h -t "${pp}.2" -c "$dir" -l "50%"
 
-    local repl_pane
-    repl_pane=$(tmux display-message -p -t "${pp}.3" "#{pane_id}")
-    tmux send-keys -t "${pp}.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
+	local repl_pane
+	repl_pane=$(tmux display-message -p -t "${pp}.3" "#{pane_id}")
+	tmux send-keys -t "${pp}.1" "export TDEV_REPL_PANE='$repl_pane'" Enter
 
-    local nvim_pane_id nvim_sock
-    nvim_pane_id=$(tmux display-message -p -t "${pp}.1" "#{pane_id}")
-    nvim_sock="/tmp/nvim-tdev-${nvim_pane_id#%}.sock"
-    tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
-    tmux send-keys -t "${pp}.2" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
-    tmux send-keys -t "${pp}.2" 'claude' Enter
-    tmux select-pane -t "${pp}.2"
+	local nvim_pane_id nvim_sock
+	nvim_pane_id=$(tmux display-message -p -t "${pp}.1" "#{pane_id}")
+	nvim_sock="/tmp/nvim-tdev-${nvim_pane_id#%}.sock"
+	tmux send-keys -t "${pp}.1" 'clear' Enter
+	tmux send-keys -t "${pp}.1" "nvim --listen '$nvim_sock'" Enter
+	tmux send-keys -t "${pp}.2" "export NVIM_LISTEN_ADDRESS='$nvim_sock'" Enter
+	tmux send-keys -t "${pp}.2" 'clear' Enter
+	tmux send-keys -t "${pp}.2" 'claude' Enter
+	tmux send-keys -t "${pp}.3" 'clear' Enter
+	tmux select-pane -t "${pp}.2"
+	tmux set-option -w -t "$target" @tide-3col 1
+	local _mid_id
+	_mid_id=$(tmux display-message -p -t "${pp}.2" "#{pane_id}")
+	"$HOME/.local/bin/tide-3col-focus" "$_mid_id" "$target"
 }
 
 apply_layout() {
-    case "$layout" in
-        default) layout_default "$@" ;;
-        3col)    layout_3col "$@" ;;
-        *)       echo "Unknown layout: $layout" >&2; exit 1 ;;
-    esac
+	case "$layout" in
+	default) layout_default "$@" ;;
+	3col) layout_3col "$@" ;;
+	*)
+		echo "Unknown layout: $layout" >&2
+		exit 1
+		;;
+	esac
 }
 
 if [ -n "$TMUX" ]; then
-    win=$(tmux new-window -P -n "$window_name" -c "$dir" -F "#{window_id}")
-    apply_layout "$win" "$win"
+	win=$(tmux new-window -P -n "$window_name" -c "$dir" -F "#{window_id}")
+	apply_layout "$win" "$win"
 else
-    session_name="$(rand_adj)-$(rand_noun)"
+	session_name="$(rand_adj)-$(rand_noun)"
 
-    tmux new-session -d -s "$session_name" -n "$window_name" -c "$dir" -x "$(tput cols)" -y "$(tput lines)"
-    apply_layout "$session_name" "$session_name:1"
-    tmux attach-session -t "$session_name"
+	tmux new-session -d -s "$session_name" -n "$window_name" -c "$dir" -x "$(tput cols)" -y "$(tput lines)"
+	apply_layout "$session_name" "$session_name:1"
+	tmux attach-session -t "$session_name"
 fi
