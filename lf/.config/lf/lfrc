@@ -1,0 +1,36 @@
+# Show hidden files by default
+set hidden true
+
+# Show file info (size + time)
+set info size:time
+
+# Enable icons (requires Nerd Font)
+set icons true
+
+# Draw box borders around panes
+set drawbox true
+
+# Dirs first
+set dirfirst true
+
+# Show line numbers
+set number true
+set relativenumber true
+
+# Custom delete with trash (safer)
+cmd delete ${{
+    set -f
+    printf '%s\n' "$fx" | tr '\n' '\0' | xargs -0 trash
+}}
+map D delete
+
+# Rename via editor
+cmd rename-editor ${{
+    vimv $fx
+    lf -remote "send $id load"
+}}
+map R rename-editor
+
+# Select all in current dir
+cmd select-all :unselect; invert
+map A select-all

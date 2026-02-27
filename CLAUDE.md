@@ -26,7 +26,7 @@ The repository follows a modular structure where each tool has its own directory
 - **Deploy dotfiles**: `./bin/manage_dotfiles.sh stow`
 - **Remove dotfiles**: `./bin/manage_dotfiles.sh unstow`
 
-The stow script manages these directories: nvim, emacs, git, tmux, zsh, wezterm
+The stow script manages these directories: nvim, emacs, git, tmux, zsh, wezterm, lf
 
 ### VS Code Configuration Management
 - **Deploy VS Code configs**: `python3 bin/manage_vscode_config.py deploy`

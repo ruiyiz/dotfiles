@@ -212,6 +212,13 @@ if command -v zoxide &>/dev/null; then
     eval "$(zoxide init zsh)"
 fi
 
+# lf: cd to last directory on quit
+lf() {
+    local lastdir="${XDG_RUNTIME_DIR:-/tmp}/lf-lastdir"
+    command lf -last-dir-path="$lastdir" "$@"
+    [ -f "$lastdir" ] && cd "$(cat "$lastdir")" && rm -f "$lastdir"
+}
+
 # Start keychain and add all id_* keys, but only on Linux systems
 # NOTE: install keychain:
 #   sudo apt install keychain
