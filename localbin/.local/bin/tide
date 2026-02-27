@@ -20,7 +20,7 @@
 #     |  nvim  | claude | shell  |
 #     |        |        |        |
 #     +--------+--------+--------+
-#       33%      33%      33%
+#       30%      40%      30%
 
 set -e
 
@@ -50,6 +50,31 @@ nouns=(arch bear bolt cave claw dawn dusk fern flux gale hawk isle jade knot lar
 
 rand_adj() { echo "${adjectives[RANDOM % ${#adjectives[@]}]}"; }
 rand_noun() { echo "${nouns[RANDOM % ${#nouns[@]}]}"; }
+
+# Resize panes in a tide 3col window on focus change.
+# Usage: _3col_focus <focused_pane_id> <window_id>
+_3col_focus() {
+	local focused="$1" win="$2"
+	local panes=()
+	while IFS= read -r p; do panes+=("$p"); done < <(
+		tmux list-panes -t "$win" -F "#{pane_left} #{pane_id}" | sort -n | awk '{print $2}'
+	)
+	[ "${#panes[@]}" -ne 3 ] && return 0
+	local left="${panes[0]}" mid="${panes[1]}" right="${panes[2]}"
+	if [ "$focused" = "$left" ]; then
+		tmux resize-pane -t "$right" -x 25%
+		tmux resize-pane -t "$left" -x 50%
+		tmux resize-pane -t "$mid" -x 25%
+	elif [ "$focused" = "$right" ]; then
+		tmux resize-pane -t "$left" -x 25%
+		tmux resize-pane -t "$right" -x 50%
+		tmux resize-pane -t "$mid" -x 25%
+	else
+		tmux resize-pane -t "$left" -x 25%
+		tmux resize-pane -t "$right" -x 25%
+		tmux resize-pane -t "$mid" -x 50%
+	fi
+}
 
 # Layout functions take two args:
 #   $1 = target (window id or session name, for the first split)
@@ -81,10 +106,9 @@ layout_default() {
 layout_3col() {
 	local target="$1" pp="$2"
 
-	# Split into 33% left / 67% right
-	tmux split-window -h -t "$target" -c "$dir" -l "67%"
-	# Split the right portion 50/50 (33/34 of total)
-	tmux split-window -h -t "${pp}.2" -c "$dir" -l "50%"
+	# Split into 30% left / 70% right, then 40% mid / 30% right
+	tmux split-window -h -t "$target" -c "$dir" -l "70%"
+	tmux split-window -h -t "${pp}.2" -c "$dir" -l "43%"
 
 	local repl_pane
 	repl_pane=$(tmux display-message -p -t "${pp}.3" "#{pane_id}")
@@ -100,10 +124,6 @@ layout_3col() {
 	tmux send-keys -t "${pp}.2" 'claude' Enter
 	tmux send-keys -t "${pp}.3" 'clear' Enter
 	tmux select-pane -t "${pp}.2"
-	tmux set-option -w -t "$target" @tide-3col 1
-	local _mid_id
-	_mid_id=$(tmux display-message -p -t "${pp}.2" "#{pane_id}")
-	"$HOME/.local/bin/tide-3col-focus" "$_mid_id" "$target"
 }
 
 apply_layout() {
