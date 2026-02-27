@@ -89,6 +89,9 @@ end
 
 -- Check if we're running on Windows and set WSL as default domain if so
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+	-- Remove bottom padding to eliminate blank line below tmux status bar in WSL2
+	config.window_padding = { bottom = 0 }
+
 	config.default_prog = {"wsl.exe", "--distribution", "Ubuntu", "--cd", "~"}
 
 	-- Configure launch menu with PowerShell and Git Bash
