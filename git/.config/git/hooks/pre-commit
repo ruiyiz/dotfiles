@@ -1,0 +1,57 @@
+#!/bin/bash
+# Pre-commit hook: format staged files in-place, then re-stage them.
+# Linters (shellcheck, ruff check) block the commit on violations.
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+exit_code=0
+
+for file in $staged; do
+	[ -f "$file" ] || continue
+	ext="${file##*.}"
+
+	is_bash=false
+	is_zsh=false
+	case "$ext" in
+	sh | bash) is_bash=true ;;
+	zsh) is_zsh=true ;;
+	*)
+		shebang=$(head -1 "$file" 2>/dev/null)
+		case "$shebang" in
+		*bash*) is_bash=true ;;
+		*zsh*) is_zsh=true ;;
+		*/sh*) is_bash=true ;;
+		esac
+		;;
+	esac
+
+	if $is_bash || $is_zsh; then
+		if command -v shfmt &>/dev/null; then
+			shfmt -w "$file" 2>/dev/null && git add "$file"
+		fi
+		if $is_bash && command -v shellcheck &>/dev/null; then
+			shellcheck "$file" || exit_code=$?
+		fi
+	fi
+
+	case "$ext" in
+	lua)
+		command -v stylua &>/dev/null && stylua "$file" 2>/dev/null && git add "$file"
+		;;
+	py)
+		if command -v ruff &>/dev/null; then
+			ruff format --quiet "$file" && git add "$file"
+			ruff check "$file" || exit_code=$?
+		fi
+		;;
+	ts | tsx | js | jsx | mjs | cjs | md | markdown | json)
+		command -v prettier &>/dev/null && prettier --write "$file" 2>/dev/null && git add "$file"
+		;;
+	R | r)
+		command -v air &>/dev/null && air format "$file" 2>/dev/null && git add "$file"
+		;;
+	esac
+done
+
+exit $exit_code

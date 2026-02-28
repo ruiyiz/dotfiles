@@ -25,11 +25,7 @@
       "Bash(rm -rf:*)",
       "Bash(sudo:*)"
     ],
-    "ask": [
-      "Bash(git push:*)",
-      "Bash(npm publish:*)",
-      "Bash(brew install:*)"
-    ],
+    "ask": ["Bash(git push:*)", "Bash(npm publish:*)", "Bash(brew install:*)"],
     "defaultMode": "bypassPermissions"
   },
   "model": "opusplan",
@@ -98,10 +94,6 @@
             "type": "command",
             "command": "$HOME/.claude/hooks/nvim-sync.sh",
             "async": true
-          },
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/lint-format.sh"
           }
         ]
       }

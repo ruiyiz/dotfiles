@@ -10,6 +10,7 @@
     required = true
 [core]
 	autocrlf = input
+	hooksPath = ~/.config/git/hooks
 [pull]
 	ff = only
 [credential]
