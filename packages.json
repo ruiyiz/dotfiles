@@ -180,6 +180,10 @@
       "macos": { "method": "brew" },
       "debian": { "method": "apt" }
     },
+    "typst": {
+      "macos": { "method": "brew" },
+      "debian": { "method": "snap" }
+    },
     "stylua": {
       "macos": { "method": "brew" },
       "debian": {
