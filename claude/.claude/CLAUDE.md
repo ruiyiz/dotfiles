@@ -7,6 +7,12 @@
 ## Python
 
 - Prefer uv for package and project management.
+- Run pytest via `uv run python -m pytest`; `uv run pytest` fails with "Failed to spawn".
+- ruff isort (I001): with default config (`combine-as-imports = false`), each aliased import requires its own line. Grouping aliases in one block triggers I001:
+  - Wrong: `from foo import bar as _bar, baz as _baz`
+  - Correct: `from foo import bar as _bar` / `from foo import baz as _baz`
+- ruff E501 in docstrings: `# noqa: E501` inside a docstring does not suppress the error (the comment itself adds length). Wrap the line instead.
+- Global git pre-commit hook at `~/.config/git/hooks/pre-commit` runs `ruff format` then `ruff check` on every staged `.py` file.
 
 ## JavaScript/TypeScript
 
