@@ -19,9 +19,9 @@ for file in $staged; do
 	*)
 		shebang=$(head -1 "$file" 2>/dev/null)
 		case "$shebang" in
-		*bash*) is_bash=true ;;
-		*zsh*) is_zsh=true ;;
-		*/sh*) is_bash=true ;;
+		"#!"*bash*) is_bash=true ;;
+		"#!"*zsh*) is_zsh=true ;;
+		"#!"*/sh*) is_bash=true ;;
 		esac
 		;;
 	esac
