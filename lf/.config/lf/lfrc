@@ -34,3 +34,27 @@ map R rename-editor
 # Select all in current dir
 cmd select-all :unselect; invert
 map A select-all
+
+# Zoxide integration
+cmd z %{{
+    result="$(zoxide query --exclude "$PWD" "$@" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id cd \"$result\""
+}}
+
+cmd zi ${{
+    result="$(zoxide query -i | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id cd \"$result\""
+}}
+
+cmd on-cd &{{
+    zoxide add "$PWD"
+    printf '%s' "$PWD" > "${XDG_RUNTIME_DIR:-/tmp}/lf-lastdir"
+}}
+map Z z
+map Zi zi
+
+cmd quit-nochdir ${{
+    printf '%s' "$LF_LAUNCH_DIR" > "${XDG_RUNTIME_DIR:-/tmp}/lf-lastdir"
+    lf -remote "send $id quit"
+}}
+map <esc> quit-nochdir

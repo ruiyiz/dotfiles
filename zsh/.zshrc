@@ -215,7 +215,8 @@ fi
 # lf: cd to last directory on quit
 lf() {
     local lastdir="${XDG_RUNTIME_DIR:-/tmp}/lf-lastdir"
-    command lf -last-dir-path="$lastdir" "$@"
+    printf '%s' "$PWD" > "$lastdir"
+    LF_LAUNCH_DIR="$PWD" command lf "$@"
     [ -f "$lastdir" ] && cd "$(cat "$lastdir")" && rm -f "$lastdir"
 }
 
