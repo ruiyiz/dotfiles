@@ -23,5 +23,16 @@
     "key": "space g c", // [G]o to [C]onsole
     "command": "workbench.action.positronConsole.focusConsole",
     "when": "isPositron && vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+  },
+  {
+    "key": "enter",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        "repl.execute",
+        "workbench.action.positronConsole.focusConsole"
+      ]
+    },
+    "when": "isCompositeNotebook && !config.interactiveWindow.executeWithShiftEnter && !notebookCellListFocused && activeEditor == 'workbench.editor.repl'"
   }
 ]
