@@ -1,0 +1,15 @@
+{
+  "soft-reset": {
+    "scope": "r",
+    "prefix": ".sr",
+    "body": [
+      "pkgs <- names(sessionInfo()\\$otherPkgs)",
+      "if (!is.null(pkgs))",
+      "  invisible(lapply(paste0(\"package:\", pkgs), detach, character.only = TRUE, unload = TRUE))",
+      "if (isNamespaceLoaded(\"box\"))",
+      "  rm(list = ls(box:::loaded_mods, all.names = TRUE), envir = box:::loaded_mods)",
+      "rm(list = ls(all.names = TRUE, envir = .GlobalEnv), envir = .GlobalEnv)"
+    ],
+    "description": "Soft reset: unload packages and clear environment"
+  }
+}

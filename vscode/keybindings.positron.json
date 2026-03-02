@@ -33,6 +33,6 @@
         "workbench.action.positronConsole.focusConsole"
       ]
     },
-    "when": "isCompositeNotebook && !config.interactiveWindow.executeWithShiftEnter && !notebookCellListFocused && activeEditor == 'workbench.editor.repl'"
+    "when": "isPositron && positronConsoleFocused"
   }
 ]
