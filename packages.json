@@ -74,6 +74,11 @@
         "pkg": "gh"
       }
     },
+    "gws": {
+      "bin": "gws",
+      "macos": { "method": "bun_global", "pkg": "@googleworkspace/cli" },
+      "debian": { "method": "bun_global", "pkg": "@googleworkspace/cli" }
+    },
     "go": {
       "macos": { "method": "brew" },
       "debian": {

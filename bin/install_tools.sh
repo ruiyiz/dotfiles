@@ -44,6 +44,7 @@ detect_platform() {
 	Darwin) PLATFORM="macos" ;;
 	Linux)
 		if [ -f /etc/os-release ]; then
+			# shellcheck source=/dev/null
 			. /etc/os-release
 			case "$ID" in
 			debian | ubuntu | linuxmint | pop | elementary | zorin | kali | raspbian)
@@ -162,7 +163,7 @@ install_github_deb() {
 	fi
 
 	local tmp
-	tmp="$(mktemp /tmp/${name}-XXXX.deb)"
+	tmp="$(mktemp /tmp/"${name}"-XXXX.deb)"
 	curl -fsSL -o "$tmp" "$download_url"
 	sudo dpkg -i "$tmp"
 	rm -f "$tmp"
@@ -207,7 +208,11 @@ install_github_binary() {
 	chmod +x "$bin"
 	local bin_dir
 	bin_dir="$([ "$PLATFORM" = "macos" ] && echo "/opt/homebrew/bin" || echo "/usr/local/bin")"
-	[ "$PLATFORM" = "macos" ] && mv "$bin" "$bin_dir/$binary_name" || sudo mv "$bin" "$bin_dir/$binary_name"
+	if [ "$PLATFORM" = "macos" ]; then
+		mv "$bin" "$bin_dir/$binary_name"
+	else
+		sudo mv "$bin" "$bin_dir/$binary_name"
+	fi
 	rm -rf "$tmp_dir"
 }
 
@@ -336,6 +341,16 @@ install_uv_tool() {
 	local pkg="$1"
 	log "uv tool: $pkg"
 	uv tool install "$pkg" || uv tool upgrade "$pkg"
+}
+
+install_bun_global() {
+	local pkg="$1"
+	log "bun global: $pkg"
+	if ! command -v bun &>/dev/null; then
+		fail "bun not found; install bun first"
+		return 1
+	fi
+	bun install -g "$pkg"
 }
 
 install_go_install() {
@@ -525,6 +540,10 @@ run() {
 			uv_tool)
 				pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")" || exit 1
 				install_uv_tool "$pkg" || exit $?
+				;;
+			bun_global)
+				pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg // $n' "$conf")" || exit 1
+				install_bun_global "$pkg" || exit $?
 				;;
 			go_install)
 				pkg="$(jq -r --arg n "$name" --arg p "$PLATFORM" '.packages[$n][$p].pkg' "$conf")" || exit 1
