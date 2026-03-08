@@ -280,3 +280,5 @@ fi
 if [[ "$IS_MACOS" != "true" ]]; then
     export PATH="$HOME/.turso:$PATH"
 fi
+
+gwcd() { cd $(git worktree list | grep "$1" | awk '{print $1}'); }

@@ -9,7 +9,7 @@
   },
   "catppuccin": {
     "branch": "main",
-    "commit": "0a5de4da015a175f416d6ef1eda84661623e0500"
+    "commit": "12c004cde3f36cb1d57242f1e6aac46b09a0e5b4"
   },
   "cmp-buffer": {
     "branch": "main",
@@ -33,11 +33,11 @@
   },
   "copilot.lua": {
     "branch": "master",
-    "commit": "00446a63cba4cc59bb24fc1e210a555a3e4acdfb"
+    "commit": "575646d22e4a80758935e92f7be7e210c1ceb5bc"
   },
   "gitsigns.nvim": {
     "branch": "main",
-    "commit": "9f3c6dd7868bcc116e9c1c1929ce063b978fa519"
+    "commit": "7c4faa3540d0781a28588cafbd4dd187a28ac6e3"
   },
   "gruvbox.nvim": {
     "branch": "main",
@@ -117,7 +117,7 @@
   },
   "vague.nvim": {
     "branch": "main",
-    "commit": "4abd79d6fbaca57bf437763d0b5bed364e4512bd"
+    "commit": "8c4643f8a5106dbc492918f86ff6b5c81111ce9a"
   },
   "vim-slime": {
     "branch": "main",
