@@ -54,4 +54,11 @@ for file in $staged; do
 	esac
 done
 
+# Auto version bump: set version to today's date (CalVer YYYY.MM.DD)
+if [ -f "pyproject.toml" ]; then
+	today=$(date +"%Y.%m.%d")
+	sed -i "" "s/^version = \"[0-9]\{4\}\.[0-9]\{2\}\.[0-9]\{2\}\"/version = \"$today\"/" pyproject.toml
+	git add pyproject.toml
+fi
+
 exit $exit_code
