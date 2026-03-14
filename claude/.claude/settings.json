@@ -28,7 +28,6 @@
     "ask": ["Bash(git push:*)", "Bash(npm publish:*)", "Bash(brew install:*)"],
     "defaultMode": "bypassPermissions"
   },
-  "model": "opusplan",
   "hooks": {
     "Stop": [
       {
